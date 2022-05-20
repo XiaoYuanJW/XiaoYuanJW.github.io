@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Hexo</title>
+  
+  
+  <link href="http://example.com/atom.xml" rel="self"/>
+  
+  <link href="http://example.com/"/>
+  <updated>2022-05-20T18:16:04.651Z</updated>
+  <id>http://example.com/</id>
+  
+  <author>
+    <name>YuanJW</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Hexo</title>
+    <link href="http://example.com/2022/05/21/Hexo/"/>
+    <id>http://example.com/2022/05/21/Hexo/</id>
+    <published>2022-05-20T18:13:55.000Z</published>
+    <updated>2022-05-20T18:16:04.651Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Hexo"><a href="#Hexo" class="headerlink" title="Hexo"></a>Hexo</h1><h2 id="初始化项目"><a href="#初始化项目" class="headerlink" title="初始化项目"></a>初始化项目</h2><h3 id="安装Hexo框架"><a href="#安装Hexo框架" class="headerlink" title="安装Hexo框架"></a>安装Hexo框架</h3><h4 id="安装Node-js"><a href="#安装Node-js" class="headerlink" title="安装Node.js"></a>安装Node.js</h4><p>Node.js是JavaScript运行环境，支持JavaScript运行在服务端的开发平台</p><p>Node.js官网地址：<a href="https://nodejs.org/">https://nodejs.org/</a></p><p><img src="https://s2.loli.net/2022/05/21/TOC8w2ZSvfdFgJN.png" alt="202205201211462"></p><p><img src="https://s2.loli.net/2022/05/21/GIvEb4esqrDlFTy.png" alt="202205201226136"></p><h4 id="查看node和npm版本"><a href="#查看node和npm版本" class="headerlink" title="查看node和npm版本"></a>查看node和npm版本</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v</span><br></pre></td></tr></table></figure><p><img src="https://s2.loli.net/2022/05/21/rgEyeiRcdTj7kFq.png" alt="202205201230549"></p><h4 id="安装淘宝镜像源的cnpm管理器"><a href="#安装淘宝镜像源的cnpm管理器" class="headerlink" title="安装淘宝镜像源的cnpm管理器"></a>安装淘宝镜像源的cnpm管理器</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g cnpm --registry=http://registry.npm.taobao.org</span><br></pre></td></tr></table></figure><p><img src="https://s2.loli.net/2022/05/21/NCnrHDb2Fw8qjIa.png" alt="202205201235464"></p><h4 id="使用cnpm安装hexo"><a href="#使用cnpm安装hexo" class="headerlink" title="使用cnpm安装hexo"></a>使用cnpm安装hexo</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cnpm install -g hexo-cli</span><br></pre></td></tr></table></figure><p><img src="https://s2.loli.net/2022/05/21/NrPBRmnvYGF1i8J.png" alt="202205201237355"></p><p><img src="https://s2.loli.net/2022/05/21/5Vc2yJ4APoKEn9L.png" alt="202205202055699"></p><h3 id="新建本地博客服务"><a href="#新建本地博客服务" class="headerlink" title="新建本地博客服务"></a>新建本地博客服务</h3><h4 id="新建文件夹并进入该目录："><a href="#新建文件夹并进入该目录：" class="headerlink" title="新建文件夹并进入该目录："></a>新建文件夹并进入该目录：</h4><p><img src="https://s2.loli.net/2022/05/21/uOWaGfYP7FiMvJx.png" alt="202205202328578"></p><h4 id="初始化hexo："><a href="#初始化hexo：" class="headerlink" title="初始化hexo："></a>初始化hexo：</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure><p><img src="https://s2.loli.net/2022/05/21/rIjyqmQtHoZ65XK.png" alt="202205202357848"></p><p><img src="https://s2.loli.net/2022/05/21/EYILBe5Gz1sKmpv.png" alt="202205202357655"></p><h4 id="启动本地服务："><a href="#启动本地服务：" class="headerlink" title="启动本地服务："></a>启动本地服务：</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo s</span><br></pre></td></tr></table></figure><p><img src="https://s2.loli.net/2022/05/21/pB3Sgz4Rl1nAsrY.png" alt="202205202359271"></p><h4 id="本地访问地址"><a href="#本地访问地址" class="headerlink" title="本地访问地址:"></a>本地访问地址:</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:4000/</span><br></pre></td></tr></table></figure><p><img src="https://s2.loli.net/2022/05/21/8MDVjfRg9UadxHo.png" alt="202205210000921"></p><h4 id="创建新的文章："><a href="#创建新的文章：" class="headerlink" title="创建新的文章："></a>创建新的文章：</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo n &quot;My New Post&quot;</span><br></pre></td></tr></table></figure><p><img src="https://s2.loli.net/2022/05/21/HgeRZyahA3jP5fd.png" alt="202205210005873"></p><h4 id="清理并生成："><a href="#清理并生成：" class="headerlink" title="清理并生成："></a>清理并生成：</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br></pre></td></tr></table></figure><p><img src="https://s2.loli.net/2022/05/21/7t8aARp25ns4zYF.png" alt="202205210008839"></p><h3 id="远端部署Github"><a href="#远端部署Github" class="headerlink" title="远端部署Github"></a>远端部署Github</h3><h4 id="创建一个新的仓库："><a href="#创建一个新的仓库：" class="headerlink" title="创建一个新的仓库："></a>创建一个新的仓库：</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">YourGithubName.github.io</span><br></pre></td></tr></table></figure><p><img src="https://s2.loli.net/2022/05/21/lZNmv2BaRI3zOow.png" alt="image-20220521013933355"></p><h4 id="在Blog目录下安装git部署插件："><a href="#在Blog目录下安装git部署插件：" class="headerlink" title="在Blog目录下安装git部署插件："></a>在Blog目录下安装git部署插件：</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cnpm install --save hexo-deployer-git</span><br></pre></td></tr></table></figure><p><img src="https://s2.loli.net/2022/05/21/pX61UCDBTFakeKS.png" alt="image-20220521014255050"></p><h4 id="配置-config-yml"><a href="#配置-config-yml" class="headerlink" title="配置_config.yml"></a>配置_config.yml</h4><p><img src="https://s2.loli.net/2022/05/21/7xKjgYCRUXvMfOQ.png" alt="image-20220521014451812"></p><p><img src="https://s2.loli.net/2022/05/21/NcFBdCJlhGkyeVY.png" alt="image-20220521015324639"></p><h4 id="部署到Github远端："><a href="#部署到Github远端：" class="headerlink" title="部署到Github远端："></a>部署到Github远端：</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure><p><img src="https://s2.loli.net/2022/05/21/TGDAKj5SauzUpOB.png" alt="image-20220521015431257"></p><h4 id="查看博客"><a href="#查看博客" class="headerlink" title="查看博客:"></a>查看博客:</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://YourGithubName.github.io/ </span><br></pre></td></tr></table></figure><p><img src="https://s2.loli.net/2022/05/21/UHpLAeJX9bYqNa1.png" alt="image-20220521015704706"></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;Hexo&quot;&gt;&lt;a href=&quot;#Hexo&quot; class=&quot;headerlink&quot; title=&quot;Hexo&quot;&gt;&lt;/a&gt;Hexo&lt;/h1&gt;&lt;h2 id=&quot;初始化项目&quot;&gt;&lt;a href=&quot;#初始化项目&quot; class=&quot;headerlink&quot; title=&quot;初始化项目&quot;&gt;</summary>
+      
+    
+    
+    
+    
+    <category term="Others" scheme="http://example.com/tags/Others/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="http://example.com/2022/05/20/hello-world/"/>
+    <id>http://example.com/2022/05/20/hello-world/</id>
+    <published>2022-05-20T15:44:47.696Z</published>
+    <updated>1985-10-26T08:15:00.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt; for</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+</feed>
