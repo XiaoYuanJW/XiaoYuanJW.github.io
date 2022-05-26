@@ -1,5 +1,7 @@
+http://example.com/2022/05/26/01.SpringCloud%E5%89%8D%E8%A8%80%E5%92%8C%E7%AE%80%E4%BB%8B/
 http://example.com/2022/05/22/Docsify/
 http://example.com/2022/05/21/Hexo/
 http://example.com/2022/05/20/hello-world/
 http://example.com/
+http://example.com/tags/Spring-Cloud/
 http://example.com/tags/Others/
