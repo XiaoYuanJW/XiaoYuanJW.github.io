@@ -1,0 +1,234 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>02.微服务项目搭建 | Hexo</title><meta name="keywords" content="Spring Cloud"><meta name="author" content="YuanJW"><meta name="copyright" content="YuanJW"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="微服务项目搭建本项目示例是一个图书借阅系统，本教程会更加注重于架构设计上的讲解，弱化业务功能和实现原理方面的研究。 服务的拆分 单一职责：不同微服务开发不同的业务 数据独立：每个微服务拥有自己的数据库 面向服务：将业务暴露为接口，供其他微服务使用  构建父项目     父项目只负责依赖管理，删除无用文件  导入通用依赖  新建子模块    创建启动类  创建配置文件-application.yml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="02.微服务项目搭建">
+<meta property="og:url" content="http://example.com/2022/05/28/02.%E5%BE%AE%E6%9C%8D%E5%8A%A1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="微服务项目搭建本项目示例是一个图书借阅系统，本教程会更加注重于架构设计上的讲解，弱化业务功能和实现原理方面的研究。 服务的拆分 单一职责：不同微服务开发不同的业务 数据独立：每个微服务拥有自己的数据库 面向服务：将业务暴露为接口，供其他微服务使用  构建父项目     父项目只负责依赖管理，删除无用文件  导入通用依赖  新建子模块    创建启动类  创建配置文件-application.yml">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/img/default-cover/17.png">
+<meta property="article:published_time" content="2022-05-28T12:10:10.000Z">
+<meta property="article:modified_time" content="2022-05-29T06:43:39.536Z">
+<meta property="article:author" content="YuanJW">
+<meta property="article:tag" content="Spring Cloud">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/default-cover/17.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2022/05/28/02.%E5%BE%AE%E6%9C%8D%E5%8A%A1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '02.微服务项目搭建',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-05-29 14:43:39'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default-cover/17.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Hexo</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">02.微服务项目搭建</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2022-05-28T12:10:10.000Z" title="Created 2022-05-28 20:10:10">2022-05-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2022-05-29T06:43:39.536Z" title="Updated 2022-05-29 14:43:39">2022-05-29</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="02.微服务项目搭建"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="微服务项目搭建"><a href="#微服务项目搭建" class="headerlink" title="微服务项目搭建"></a>微服务项目搭建</h1><p>本项目示例是一个图书借阅系统，本教程会更加注重于架构设计上的讲解，弱化业务功能和实现原理方面的研究。</p>
+<h2 id="服务的拆分"><a href="#服务的拆分" class="headerlink" title="服务的拆分"></a>服务的拆分</h2><ul>
+<li>单一职责：不同微服务开发不同的业务</li>
+<li>数据独立：每个微服务拥有自己的数据库</li>
+<li>面向服务：将业务暴露为接口，供其他微服务使用</li>
+</ul>
+<h2 id="构建父项目"><a href="#构建父项目" class="headerlink" title="构建父项目"></a>构建父项目</h2><p><img src="https://s2.loli.net/2022/05/28/a72gwLiNPjVFeRH.png" alt="image-20220528192605703"></p>
+<p><img src="https://s2.loli.net/2022/05/28/eCGT67JqZaKtNlU.png" alt="image-20220528192547239"></p>
+<p><img src="https://s2.loli.net/2022/05/28/RNz2cU6XVTPt9fK.png" alt="image-20220528193009882"></p>
+<p><img src="https://s2.loli.net/2022/05/28/USyIcn1vuzAXB9V.png" alt="image-20220528193030549"></p>
+<p><img src="https://s2.loli.net/2022/05/28/zXlJeVg1QLt87B4.png" alt="image-20220528193137238"></p>
+<p>父项目只负责依赖管理，删除无用文件</p>
+<p><img src="https://s2.loli.net/2022/05/28/J7xueRdADkHwt5z.png" alt="image-20220528193644465"></p>
+<p>导入通用依赖</p>
+<p><img src="https://s2.loli.net/2022/05/28/ZzNhY5FTbKqHwtB.png" alt="image-20220528204437918"></p>
+<h2 id="新建子模块"><a href="#新建子模块" class="headerlink" title="新建子模块"></a>新建子模块</h2><p><img src="https://s2.loli.net/2022/05/28/NXE49tnoBUPc3eq.png" alt="image-20220528201545755"></p>
+<p><img src="https://s2.loli.net/2022/05/28/T5ZBHuAUWO9SGoQ.png" alt="image-20220528202339977"></p>
+<p><img src="https://s2.loli.net/2022/05/28/8rnsHlRKtIfeEQ7.png" alt="image-20220528201719876"></p>
+<p><img src="https://s2.loli.net/2022/05/28/YI56QSyDsnabFhO.png" alt="image-20220528202407207"></p>
+<h2 id="创建启动类"><a href="#创建启动类" class="headerlink" title="创建启动类"></a>创建启动类</h2><p><img src="https://s2.loli.net/2022/05/28/N4ql57AQSXri1km.png" alt="image-20220528202711560"></p>
+<p><img src="https://s2.loli.net/2022/05/28/QCdOZNnXKEcj6qT.png" alt="image-20220528202911977"></p>
+<h2 id="创建配置文件-application-yml"><a href="#创建配置文件-application-yml" class="headerlink" title="创建配置文件-application.yml"></a>创建配置文件-application.yml</h2><p><img src="https://s2.loli.net/2022/05/28/gI9Uy7xrqkOhsVM.png" alt="image-20220528203410113"></p>
+<p>添加服务端口号</p>
+<p><img src="https://s2.loli.net/2022/05/28/abqlzVI8JG2Otgm.png" alt="image-20220528203852132"></p>
+<p>导入spring-boot-starter-web依赖</p>
+<p><img src="https://s2.loli.net/2022/05/28/KH85dGoLpMCzbDm.png" alt="image-20220528204039657"></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="创建数据库"><a href="#创建数据库" class="headerlink" title="创建数据库"></a>创建数据库</h2><p>在实际的应用场景中，每个微服务都有自己的数据库服务器，按照单一职责的原则，每个微服务只会操作自己的数据库。</p>
+<p><img src="https://s2.loli.net/2022/05/28/DYycWiIN8qjb4R6.png" alt="image-20220528234437570"></p>
+<p><img src="https://s2.loli.net/2022/05/28/u3pVNGjP2XUcLns.png" alt="image-20220528235133900"></p>
+<p><img src="https://s2.loli.net/2022/05/28/c78gVLrtkxBKeYT.png" alt="image-20220528235150408"></p>
+<p><img src="https://s2.loli.net/2022/05/28/AE4pBzKDtfMalGU.png" alt="image-20220528235202429"></p>
+<p><img src="https://s2.loli.net/2022/05/28/RBTK51ZW8McUnVS.png" alt="image-20220528235214185"></p>
+<p>添加索引</p>
+<p><img src="https://s2.loli.net/2022/05/29/horHEXnksBOu9vY.png" alt="image-20220529000109085"></p>
+<p>在父项目引入MyBatis依赖进行版本管理</p>
+<p><img src="https://s2.loli.net/2022/05/29/sjFcVO2AorpKDxf.png" alt="image-20220529001036883"></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--依赖版本号管理--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mybatis.spring.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencyManagement</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在子项目中引入Mybatis依赖</p>
+<p><img src="https://s2.loli.net/2022/05/29/ndfhVgvwGiZR41b.png" alt="image-20220529001154257"></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mybatis.spring.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="数据源信息配置"><a href="#数据源信息配置" class="headerlink" title="数据源信息配置"></a>数据源信息配置</h2><p><img src="https://s2.loli.net/2022/05/29/ge3VYPZcUAHqXrz.png" alt="image-20220529001617549"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  datasource:</span><br><span class="line">    driver-class-name: com.mysql.cj.jdbc.Driver</span><br><span class="line">    url: jdbc:mysql://localhost:3306/cloudstudy_user</span><br><span class="line">    username: root</span><br><span class="line">    password: 13851176590++</span><br></pre></td></tr></table></figure>
+
+<h2 id="公共项目创建和引入"><a href="#公共项目创建和引入" class="headerlink" title="公共项目创建和引入"></a>公共项目创建和引入</h2><p>将服务需要用到的实体类单独放入一个项目模块中，将需要实体类的项目模块引用存放共用实体的项目，以保证每个微服务的实体类信息共用。</p>
+<p><img src="https://s2.loli.net/2022/05/29/wpRF6obg1ZkrhM2.png" alt="image-20220529003014986"></p>
+<p>在需要共用实体类的项目模块中引入</p>
+<p>​    <img src="https://s2.loli.net/2022/05/29/phz256BWgL8uCGy.png" alt="image-20220529003513439"></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.example<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>common<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="书籍信息查询业务"><a href="#书籍信息查询业务" class="headerlink" title="书籍信息查询业务"></a>书籍信息查询业务</h2><p><img src="https://s2.loli.net/2022/05/29/AvF5qp8Oh1LPNyQ.png" alt="image-20220529005821372"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Mapper</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">BookMapper</span> &#123;</span><br><span class="line">    <span class="meta">@Select(&quot;select * from book_info where id = #&#123;id&#125;&quot;)</span></span><br><span class="line">    Book <span class="title function_">getBookById</span><span class="params">(Long id)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">BookService</span> &#123;</span><br><span class="line">    Book <span class="title function_">getBookById</span><span class="params">(Long id)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">BookService</span> &#123;</span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    BookMapper bookMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Book <span class="title function_">getBookById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> bookMapper.getBookById(id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookController</span> &#123;</span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    BookService bookService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/book/&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Book <span class="title function_">getBookById</span><span class="params">(<span class="meta">@PathVariable(&quot;id&quot;)</span> Long id)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> bookService.getBookById(id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2022/05/29/Bk2RXv7gut6r4Ld.png" alt="image-20220529011059566"></p>
+<p>用户信息查询业务同理</p>
+<h2 id="借阅业务查询业务"><a href="#借阅业务查询业务" class="headerlink" title="借阅业务查询业务"></a>借阅业务查询业务</h2><p>借阅服务是一个关联性比较强的服务，需要在查询出借阅信息的基础上，获取借阅用户和借阅书籍的详细信息，根据单一职责和数据独立的原则，我们可以让一个服务调用另一个服务来获取信息</p>
+<p><img src="https://s2.loli.net/2022/05/29/UOwuHFY9t8M4g5J.jpg" alt="image-20220323140322502"></p>
+<h2 id="RestTemplate-HTTP请求工具实现远程调用"><a href="#RestTemplate-HTTP请求工具实现远程调用" class="headerlink" title="RestTemplate-HTTP请求工具实现远程调用"></a>RestTemplate-HTTP请求工具实现远程调用</h2><p>这里先使用RestTemplate作为HTTP请求工具，它提供了常见的REST请求方案的模版，例如 GET 请求、POST 请求、PUT 请求、DELETE 请求以及一些通用的请求执行方法 exchange 以及 execute。</p>
+<h3 id="注册RestTemplate"><a href="#注册RestTemplate" class="headerlink" title="注册RestTemplate"></a>注册RestTemplate</h3><p>由于启动类也是配置类，我们可以直接在启动类实现RestTemplate对象的创建和注册。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@MapperScan(&quot;com.test.dao&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BorrowApplication</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(BorrowApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/*注册RestTemplate对象*/</span></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> RestTemplate <span class="title function_">restTemplate</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">RestTemplate</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里以查询用户借阅信息为例</p>
+<p><img src="https://s2.loli.net/2022/05/29/s7FTxkGOK3jZVor.png" alt="image-20220529142333093"></p>
+<h3 id="配置文件配置mybatis"><a href="#配置文件配置mybatis" class="headerlink" title="配置文件配置mybatis"></a>配置文件配置mybatis</h3><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mybatis:</span></span><br><span class="line">  <span class="attr">mapper-locations:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">classpath:mapper/*.xml</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="在启动类添加-MapperScan"><a href="#在启动类添加-MapperScan" class="headerlink" title="在启动类添加@MapperScan"></a>在启动类添加@MapperScan</h3><p><img src="https://s2.loli.net/2022/05/29/Zb5J6cEQU3xwjiV.png" alt="image-20220529142636511"></p>
+<h3 id="业务处理"><a href="#业务处理" class="headerlink" title="业务处理"></a>业务处理</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserBorrowDetail</span> &#123;</span><br><span class="line">    User user;</span><br><span class="line">    List&lt;Book&gt; books;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Mapper</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">BorrowMapper</span> &#123;</span><br><span class="line">    List&lt;Borrow&gt; <span class="title function_">getBorrow</span><span class="params">(Long uid, Long bid)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;com.test.dao.BorrowMapper&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;getBorrow&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;com.test.entity.Borrow&quot;</span>&gt;</span></span><br><span class="line">        SELECT * FROM borrow_info</span><br><span class="line">        <span class="tag">&lt;<span class="name">where</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">&quot;uid != null&quot;</span>&gt;</span> uid = #&#123;uid&#125;<span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">if</span> <span class="attr">test</span>=<span class="string">&quot;bid != null&quot;</span>&gt;</span> and bid = #&#123;bid&#125;<span class="tag">&lt;/<span class="name">if</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">where</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">BorrowService</span> &#123;</span><br><span class="line">    UserBorrowDetail <span class="title function_">getBorrowByUser</span><span class="params">(Long uid)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用RestTemplate服务远程调用"><a href="#使用RestTemplate服务远程调用" class="headerlink" title="使用RestTemplate服务远程调用"></a>使用RestTemplate服务远程调用</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BorrowServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">BorrowService</span> &#123;</span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    BorrowMapper borrowMapper;</span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    RestTemplate restTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> UserBorrowDetail <span class="title function_">getBorrowByUser</span><span class="params">(Long uid)</span> &#123;</span><br><span class="line">        List&lt;Borrow&gt; borrows = borrowMapper.getBorrow(uid,<span class="literal">null</span>);</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> restTemplate.getForObject(<span class="string">&quot;http://localhost:8101/user/&quot;</span> + uid, User.class);</span><br><span class="line">        List&lt;Book&gt; books = borrows.stream().map(borrow -&gt; restTemplate.getForObject(<span class="string">&quot;http://localhost:8201/book/&quot;</span> + borrow.getBid(), Book.class)).collect(Collectors.toList());</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">UserBorrowDetail</span>(user, books);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;    </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BorrowController</span> &#123;</span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    BorrowService borrowService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping(&quot;/borrow/user/&#123;uid&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> UserBorrowDetail <span class="title function_">getBorrowByUser</span><span class="params">(<span class="meta">@PathVariable(&quot;uid&quot;)</span> Long uid)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> borrowService.getBorrowByUser(uid);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2022/05/29/CsgT2OHu9ZGbVcN.png" alt="image-20220529143045741"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="http://example.com">YuanJW</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2022/05/28/02.%E5%BE%AE%E6%9C%8D%E5%8A%A1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/">http://example.com/2022/05/28/02.%E5%BE%AE%E6%9C%8D%E5%8A%A1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Spring-Cloud/">Spring Cloud</a></div><div class="post_share"><div class="social-share" data-image="/img/default-cover/17.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/ShareJS/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/ShareJS/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/05/26/01.SpringCloud%E5%89%8D%E8%A8%80%E5%92%8C%E7%AE%80%E4%BB%8B/"><img class="next-cover" src="/img/default-cover/59.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">01.Spring Cloud</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2022/05/26/01.SpringCloud%E5%89%8D%E8%A8%80%E5%92%8C%E7%AE%80%E4%BB%8B/" title="01.Spring Cloud"><img class="cover" src="/img/default-cover/59.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-26</div><div class="title">01.Spring Cloud</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YuanJW</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/XiaoYuanJW" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="/2754742370@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">微服务项目搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%8B%86%E5%88%86"><span class="toc-number">1.1.</span> <span class="toc-text">服务的拆分</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%84%E5%BB%BA%E7%88%B6%E9%A1%B9%E7%9B%AE"><span class="toc-number">1.2.</span> <span class="toc-text">构建父项目</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%B0%E5%BB%BA%E5%AD%90%E6%A8%A1%E5%9D%97"><span class="toc-number">1.3.</span> <span class="toc-text">新建子模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%90%AF%E5%8A%A8%E7%B1%BB"><span class="toc-number">1.4.</span> <span class="toc-text">创建启动类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6-application-yml"><span class="toc-number">1.5.</span> <span class="toc-text">创建配置文件-application.yml</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.6.</span> <span class="toc-text">创建数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%BA%90%E4%BF%A1%E6%81%AF%E9%85%8D%E7%BD%AE"><span class="toc-number">1.7.</span> <span class="toc-text">数据源信息配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AC%E5%85%B1%E9%A1%B9%E7%9B%AE%E5%88%9B%E5%BB%BA%E5%92%8C%E5%BC%95%E5%85%A5"><span class="toc-number">1.8.</span> <span class="toc-text">公共项目创建和引入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%A6%E7%B1%8D%E4%BF%A1%E6%81%AF%E6%9F%A5%E8%AF%A2%E4%B8%9A%E5%8A%A1"><span class="toc-number">1.9.</span> <span class="toc-text">书籍信息查询业务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%80%9F%E9%98%85%E4%B8%9A%E5%8A%A1%E6%9F%A5%E8%AF%A2%E4%B8%9A%E5%8A%A1"><span class="toc-number">1.10.</span> <span class="toc-text">借阅业务查询业务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RestTemplate-HTTP%E8%AF%B7%E6%B1%82%E5%B7%A5%E5%85%B7%E5%AE%9E%E7%8E%B0%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8"><span class="toc-number">1.11.</span> <span class="toc-text">RestTemplate-HTTP请求工具实现远程调用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B3%A8%E5%86%8CRestTemplate"><span class="toc-number">1.11.1.</span> <span class="toc-text">注册RestTemplate</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E9%85%8D%E7%BD%AEmybatis"><span class="toc-number">1.11.2.</span> <span class="toc-text">配置文件配置mybatis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%A8%E5%90%AF%E5%8A%A8%E7%B1%BB%E6%B7%BB%E5%8A%A0-MapperScan"><span class="toc-number">1.11.3.</span> <span class="toc-text">在启动类添加@MapperScan</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%9A%E5%8A%A1%E5%A4%84%E7%90%86"><span class="toc-number">1.11.4.</span> <span class="toc-text">业务处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8RestTemplate%E6%9C%8D%E5%8A%A1%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8"><span class="toc-number">1.11.5.</span> <span class="toc-text">使用RestTemplate服务远程调用</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/05/28/02.%E5%BE%AE%E6%9C%8D%E5%8A%A1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/" title="02.微服务项目搭建"><img src="/img/default-cover/17.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="02.微服务项目搭建"/></a><div class="content"><a class="title" href="/2022/05/28/02.%E5%BE%AE%E6%9C%8D%E5%8A%A1%E9%A1%B9%E7%9B%AE%E6%90%AD%E5%BB%BA/" title="02.微服务项目搭建">02.微服务项目搭建</a><time datetime="2022-05-28T12:10:10.000Z" title="Created 2022-05-28 20:10:10">2022-05-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/26/01.SpringCloud%E5%89%8D%E8%A8%80%E5%92%8C%E7%AE%80%E4%BB%8B/" title="01.Spring Cloud"><img src="/img/default-cover/59.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="01.Spring Cloud"/></a><div class="content"><a class="title" href="/2022/05/26/01.SpringCloud%E5%89%8D%E8%A8%80%E5%92%8C%E7%AE%80%E4%BB%8B/" title="01.Spring Cloud">01.Spring Cloud</a><time datetime="2022-05-26T14:30:55.000Z" title="Created 2022-05-26 22:30:55">2022-05-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/22/Docsify/" title="Docsify"><img src="/img/default-cover/10.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Docsify"/></a><div class="content"><a class="title" href="/2022/05/22/Docsify/" title="Docsify">Docsify</a><time datetime="2022-05-22T09:18:55.000Z" title="Created 2022-05-22 17:18:55">2022-05-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/21/Hexo/" title="Hexo"><img src="/img/default-cover/15.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hexo"/></a><div class="content"><a class="title" href="/2022/05/21/Hexo/" title="Hexo">Hexo</a><time datetime="2022-05-20T18:13:55.000Z" title="Created 2022-05-21 02:13:55">2022-05-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/05/20/hello-world/" title="Hello World"><img src="/img/default-cover/19.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2022/05/20/hello-world/" title="Hello World">Hello World</a><time datetime="2022-05-20T15:44:47.696Z" title="Created 2022-05-20 23:44:47">2022-05-20</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By YuanJW</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
