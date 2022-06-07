@@ -1,3 +1,5 @@
+http://example.com/2022/06/05/08.Spring%20Cloud%EF%BC%88%E5%85%AB%EF%BC%89Config/
+http://example.com/2022/06/05/07.Spring%20Cloud%EF%BC%88%E4%B8%83%EF%BC%89Gateway/
 http://example.com/2022/06/04/05.Spring%20Cloud%EF%BC%88%E4%BA%94%EF%BC%89Hystrix/
 http://example.com/2022/06/05/06.Spring%20Cloud%EF%BC%88%E5%85%AD%EF%BC%89OpenFegin/
 http://example.com/2022/05/31/04.Spring%20Cloud%EF%BC%88%E5%9B%9B%EF%BC%89%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/

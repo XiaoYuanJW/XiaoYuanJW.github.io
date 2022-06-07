@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://example.com/2022/06/05/08.Spring%20Cloud%EF%BC%88%E5%85%AB%EF%BC%89Config/</loc>
+    
+    <lastmod>2022-06-06</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/2022/06/05/07.Spring%20Cloud%EF%BC%88%E4%B8%83%EF%BC%89Gateway/</loc>
+    
+    <lastmod>2022-06-06</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://example.com/2022/06/04/05.Spring%20Cloud%EF%BC%88%E4%BA%94%EF%BC%89Hystrix/</loc>
     
     <lastmod>2022-06-05</lastmod>
@@ -85,7 +103,7 @@
 
   <url>
     <loc>http://example.com/</loc>
-    <lastmod>2022-06-05</lastmod>
+    <lastmod>2022-06-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -93,14 +111,14 @@
   
   <url>
     <loc>http://example.com/tags/Spring-Cloud/</loc>
-    <lastmod>2022-06-05</lastmod>
+    <lastmod>2022-06-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://example.com/tags/Others/</loc>
-    <lastmod>2022-06-05</lastmod>
+    <lastmod>2022-06-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
