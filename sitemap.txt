@@ -1,3 +1,4 @@
+http://example.com/2022/07/01/MyBatis-Plus/
 http://example.com/2022/06/26/Docker/
 http://example.com/2022/06/19/Spring%20Cloud%20Alibaba%EF%BC%88%E4%BA%8C%EF%BC%89Sentinel/
 http://example.com/2022/06/06/08.Spring%20Cloud%EF%BC%88%E5%85%AB%EF%BC%89Config/
@@ -17,3 +18,4 @@ http://example.com/tags/Spring-Cloud/
 http://example.com/tags/Docker/
 http://example.com/tags/Others/
 http://example.com/tags/Spring-Cloud-Alibaba/
+http://example.com/tags/MyBatis-Plus/
