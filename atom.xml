@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2022-07-05T13:54:34.950Z</updated>
+  <updated>2022-07-26T08:45:51.773Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Spring Cloud Alibaba（三） Seata</title>
+    <link href="http://example.com/2022/07/24/Spring%20Cloud%20Alibaba%EF%BC%88%E4%B8%89%EF%BC%89Seata/"/>
+    <id>http://example.com/2022/07/24/Spring%20Cloud%20Alibaba%EF%BC%88%E4%B8%89%EF%BC%89Seata/</id>
+    <published>2022-07-24T12:35:22.000Z</published>
+    <updated>2022-07-26T08:45:51.773Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Spring-Cloud-Alibaba（三）Seata"><a href="#Spring-Cloud-Alibaba（三）Seata" class="headerlink" title="Spring Cloud Alibaba（三）Seata"></a>Spring Cloud Alibaba（三）Seata</h1><blockquote><p>Seate是一款开源的分布式事务解决方案，致力于在微服务架构下提供高性能和简单易用的分布式事务服务。</p><p>Seata将为用户提供了AT、TCC、SAGA和XA事务模型，为用户打造一站式的分布式解决方案。    </p></blockquote><p><img src="https://s2.loli.net/2022/07/25/F4Y3lbW6nKVSiRx.png" alt="img"></p><h2 id="项目场景搭建"><a href="#项目场景搭建" class="headerlink" title="项目场景搭建"></a>项目场景搭建</h2><h3 id="逻辑约定"><a href="#逻辑约定" class="headerlink" title="逻辑约定"></a>逻辑约定</h3><blockquote><p>图书借阅流程：调用图书服务书籍数量减1-&gt;添加借阅记录-&gt;调用用户服务可借阅数减1</p><p>约束：每个用户最多同时借阅2本不用的书，图书馆中的所有书都有且仅有3本</p></blockquote><h3 id="数据库修改"><a href="#数据库修改" class="headerlink" title="数据库修改"></a>数据库修改</h3><h4 id="用户表"><a href="#用户表" class="headerlink" title="用户表"></a>用户表</h4><p>添加字段book_count记录用户可借阅书籍数量</p><p><img src="https://s2.loli.net/2022/07/25/GwQxjFXoKHWsvtd.png" alt="image-20220725104408740"></p><h4 id="书籍表"><a href="#书籍表" class="headerlink" title="书籍表"></a>书籍表</h4><p>添加字段count记录书籍剩余数量</p><p><img src="https://s2.loli.net/2022/07/25/Ser7pQMnhFjltcK.png" alt="image-20220725104307273"></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;Spring-Cloud-Alibaba（三）Seata&quot;&gt;&lt;a href=&quot;#Spring-Cloud-Alibaba（三）Seata&quot; class=&quot;headerlink&quot; title=&quot;Spring Cloud Alibaba（三）Seata&quot;&gt;&lt;/a&gt;Sp</summary>
+      
+    
+    
+    
+    
+    <category term="Spring Cloud Alibaba" scheme="http://example.com/tags/Spring-Cloud-Alibaba/"/>
+    
+  </entry>
   
   <entry>
     <title>MyBatis-Plus</title>
