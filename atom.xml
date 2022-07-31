@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2022-07-31T15:16:01.304Z</updated>
+  <updated>2022-07-31T15:35:10.903Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,28 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Jenkins</title>
+    <link href="http://example.com/2022/07/31/Jenkins/"/>
+    <id>http://example.com/2022/07/31/Jenkins/</id>
+    <published>2022-07-31T14:30:55.000Z</published>
+    <updated>2022-07-31T15:35:10.903Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Jenkins"><a href="#Jenkins" class="headerlink" title="Jenkins"></a>Jenkins</h1><h2 id="Jenkins简介"><a href="#Jenkins简介" class="headerlink" title="Jenkins简介"></a>Jenkins简介</h2><blockquote><p>Jenkins是开源CI&amp;CD软件领导者，提供超过1000个插件来支持构建、部署、自动化，满足任何项目的需要。</p><p>我们可以利用Jenkins来构建和部署我们的项目，它可以实现从代码仓库获取代码，将代码打包成可执行文件并通过远程的ssh工具执行脚本来运行我们的项目。</p></blockquote><h2 id="Jenkins的安装及配置"><a href="#Jenkins的安装及配置" class="headerlink" title="Jenkins的安装及配置"></a>Jenkins的安装及配置</h2><h3 id="Docker环境下的安装"><a href="#Docker环境下的安装" class="headerlink" title="Docker环境下的安装"></a>Docker环境下的安装</h3><h4 id="Docker拉取Jenkins镜像"><a href="#Docker拉取Jenkins镜像" class="headerlink" title="Docker拉取Jenkins镜像"></a>Docker拉取Jenkins镜像</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull jenkins/jenkins</span><br></pre></td></tr></table></figure><h4 id="创建并运行Jenkins容器"><a href="#创建并运行Jenkins容器" class="headerlink" title="创建并运行Jenkins容器"></a>创建并运行Jenkins容器</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run --name jenkins \</span><br><span class="line">-p 8090:8080 -p 50000:5000 \</span><br><span class="line">-u root \</span><br><span class="line">-v /mydata/jenkins_home:/var/jenkins_home \</span><br><span class="line">-d jenkins/jenkins</span><br></pre></td></tr></table></figure><h3 id="Jenkins配置"><a href="#Jenkins配置" class="headerlink" title="Jenkins配置"></a>Jenkins配置</h3><h4 id="访问地址登录"><a href="#访问地址登录" class="headerlink" title="访问地址登录"></a>访问地址登录</h4><p>访问：<a href="http://ip:8080/">http://ip:8080/</a>  登录Jenkins</p><p>第一次登录需要输入管理员密码</p><p><img src="https://s2.loli.net/2022/07/31/2BWi4KlMGbZShoJ.png" alt="image-20220731210839012"></p><h4 id="从容器启动日志中获取管理密码"><a href="#从容器启动日志中获取管理密码" class="headerlink" title="从容器启动日志中获取管理密码"></a>从容器启动日志中获取管理密码</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker logs jenkins</span><br></pre></td></tr></table></figure><p><img src="https://s2.loli.net/2022/07/31/EaN7eB5fJcOdytr.png" alt="image-20220731211050415"></p><h4 id="选择安装插件方式"><a href="#选择安装插件方式" class="headerlink" title="选择安装插件方式"></a>选择安装插件方式</h4><p><img src="https://s2.loli.net/2022/07/31/qvhQWOmyfEIapxj.png" alt="image-20220731211149198"></p><h4 id="插件安装"><a href="#插件安装" class="headerlink" title="插件安装"></a>插件安装</h4><p><img src="https://s2.loli.net/2022/07/31/k4Tq1UyVX2wRzOD.png" alt="image-20220731211433814"></p><h4 id="创建管理员账号"><a href="#创建管理员账号" class="headerlink" title="创建管理员账号"></a>创建管理员账号</h4><p><img src="https://s2.loli.net/2022/07/31/kWyXIGobmx38Da4.png" alt="image-20220731233242388"></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;Jenkins&quot;&gt;&lt;a href=&quot;#Jenkins&quot; class=&quot;headerlink&quot; title=&quot;Jenkins&quot;&gt;&lt;/a&gt;Jenkins&lt;/h1&gt;&lt;h2 id=&quot;Jenkins简介&quot;&gt;&lt;a href=&quot;#Jenkins简介&quot; class=&quot;header</summary>
+      
+    
+    
+    
+    
+    <category term="Jenkins" scheme="http://example.com/tags/Jenkins/"/>
+    
+  </entry>
   
   <entry>
     <title></title>
