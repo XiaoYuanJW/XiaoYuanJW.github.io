@@ -1,3 +1,4 @@
+http://example.com/2022/11/06/ElasticSearch/
 http://example.com/2022/11/01/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MQ/
 http://example.com/2022/06/26/Docker/
 http://example.com/2022/07/24/Spring%20Cloud%20Alibaba%EF%BC%88%E4%B8%89%EF%BC%89Seata/
@@ -20,6 +21,7 @@ http://example.com/
 http://example.com/tags/Spring-Cloud/
 http://example.com/tags/Others/
 http://example.com/tags/Docker/
+http://example.com/tags/ElasticSearch/
 http://example.com/tags/Jenkins/
 http://example.com/tags/MyBatis-Plus/
 http://example.com/tags/Spring-Cloud-Alibaba/
