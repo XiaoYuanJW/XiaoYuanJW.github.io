@@ -1,0 +1,518 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Redis实战 | Hexo</title><meta name="keywords" content="Redis"><meta name="author" content="YuanJW"><meta name="copyright" content="YuanJW"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Redis实战 短信登录基于Session实现登录  session共享问题 多台Tomcat不共享session存储空间，当请求切换到不同的Tomcat服务时导致数据丢失的问题  session的替代方案应该满足：  数据共享 内存存储 key-value结构   基于Redis实现共享session登录    redis代替session考虑的问题 选择合适的数据结构 设置合适的key 选择合">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis实战">
+<meta property="og:url" content="http://example.com/2022/12/01/Redis%E5%AE%9E%E6%88%98/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Redis实战 短信登录基于Session实现登录  session共享问题 多台Tomcat不共享session存储空间，当请求切换到不同的Tomcat服务时导致数据丢失的问题  session的替代方案应该满足：  数据共享 内存存储 key-value结构   基于Redis实现共享session登录    redis代替session考虑的问题 选择合适的数据结构 设置合适的key 选择合">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/img/default-cover/45.png">
+<meta property="article:published_time" content="2022-12-01T00:31:22.000Z">
+<meta property="article:modified_time" content="2023-01-07T10:33:13.977Z">
+<meta property="article:author" content="YuanJW">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/default-cover/45.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2022/12/01/Redis%E5%AE%9E%E6%88%98/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Redis实战',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-01-07 18:33:13'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default-cover/45.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Hexo</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Redis实战</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2022-12-01T00:31:22.000Z" title="Created 2022-12-01 08:31:22">2022-12-01</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-01-07T10:33:13.977Z" title="Updated 2023-01-07 18:33:13">2023-01-07</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Redis实战"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Redis实战"><a href="#Redis实战" class="headerlink" title="Redis实战"></a>Redis实战</h1><p><img src="https://s2.loli.net/2022/12/02/gn1vIATkdyBReVE.png" alt="image-20221202102058814"></p>
+<h2 id="短信登录"><a href="#短信登录" class="headerlink" title="短信登录"></a>短信登录</h2><h3 id="基于Session实现登录"><a href="#基于Session实现登录" class="headerlink" title="基于Session实现登录"></a>基于Session实现登录</h3><p><img src="https://s2.loli.net/2022/12/02/l3MVEFtr7CZzu4q.png" alt="image-20221202103316067"></p>
+<p><img src="https://s2.loli.net/2022/12/04/dqQxjSwV5sgUkaL.png" alt="image-20221204210746963"></p>
+<h3 id="session共享问题"><a href="#session共享问题" class="headerlink" title="session共享问题"></a>session共享问题</h3><blockquote>
+<p>多台Tomcat不共享session存储空间，当请求切换到不同的Tomcat服务时导致数据丢失的问题</p>
+</blockquote>
+<p>session的替代方案应该满足：</p>
+<ul>
+<li>数据共享</li>
+<li>内存存储</li>
+<li>key-value结构</li>
+</ul>
+<p><img src="https://s2.loli.net/2022/12/05/N4uUS6LXwR7KqWF.png" alt="image-20221205120908299"></p>
+<h3 id="基于Redis实现共享session登录"><a href="#基于Redis实现共享session登录" class="headerlink" title="基于Redis实现共享session登录"></a>基于Redis实现共享session登录</h3><p><img src="https://s2.loli.net/2022/12/05/VdxnqT8gij2QHKp.png" alt="image-20221205122834128"></p>
+<p><img src="https://s2.loli.net/2022/12/05/kZMPGNa2hDvCo7m.png" alt="image-20221205122911443"></p>
+<p><img src="https://s2.loli.net/2022/12/05/7ZVrOBa6fHtxAYS.png" alt="image-20221205123132178"></p>
+<p><img src="https://s2.loli.net/2022/12/05/qyh7i12XMdZxklU.png" alt="image-20221205123306145"></p>
+<h4 id="redis代替session考虑的问题"><a href="#redis代替session考虑的问题" class="headerlink" title="redis代替session考虑的问题"></a>redis代替session考虑的问题</h4><ul>
+<li>选择合适的数据结构</li>
+<li>设置合适的key</li>
+<li>选择合适的存储粒度</li>
+<li>设置合适的有效期</li>
+</ul>
+<h3 id="解决状态登录刷新的问题"><a href="#解决状态登录刷新的问题" class="headerlink" title="解决状态登录刷新的问题"></a>解决状态登录刷新的问题</h3><p><img src="https://s2.loli.net/2022/12/06/NKk5lG4Qdi93Ian.png" alt="image-20221206100256416"></p>
+<p>值得注意，这里需要登录的路径才会走拦截器刷新token有效期，导致不需要登录即未拦截的路径没有刷新token有效期。</p>
+<p><img src="https://s2.loli.net/2022/12/06/cfiluKA7GBn3oPm.png" alt="image-20221206100835173"></p>
+<h2 id="商户查询缓存"><a href="#商户查询缓存" class="headerlink" title="商户查询缓存"></a>商户查询缓存</h2><h3 id="什么是缓存"><a href="#什么是缓存" class="headerlink" title="什么是缓存"></a>什么是缓存</h3><blockquote>
+<p>缓存就是数据交换的缓存区（称作Cache）,是存贮数据的临时的地方，一般读写性能较高。</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2022/12/06/qgDXHVkPJr4CQb3.png" alt="image-20221206104611652"></p>
+<p><img src="https://s2.loli.net/2022/12/06/Bd6HixR1eAZoSVp.png" alt="image-20221206104759767"></p>
+<h3 id="添加Redis缓存"><a href="#添加Redis缓存" class="headerlink" title="添加Redis缓存"></a>添加Redis缓存</h3><p><img src="https://s2.loli.net/2022/12/06/7ByN1vuk8lFRjfC.png" alt="image-20221206220709634"></p>
+<h3 id="缓存更新策略"><a href="#缓存更新策略" class="headerlink" title="缓存更新策略"></a>缓存更新策略</h3><p><img src="https://s2.loli.net/2022/12/07/FfCSi97R1EmkUso.png" alt="image-20221207105308463"></p>
+<h4 id="三种常见的缓存读写策略"><a href="#三种常见的缓存读写策略" class="headerlink" title="三种常见的缓存读写策略"></a>三种常见的缓存读写策略</h4><h5 id="Cache-Aside-Pattern（旁路缓存模式）"><a href="#Cache-Aside-Pattern（旁路缓存模式）" class="headerlink" title="Cache Aside Pattern（旁路缓存模式）"></a>Cache Aside Pattern（旁路缓存模式）</h5><blockquote>
+<p>在更新数据库的同时更新缓存</p>
+<p>这是平时比较多的缓存读写模式，比较适合读多写少的场景</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2022/12/07/KPiDqZF8Cljydtk.png" alt="image-20221207105745436"></p>
+<p><img src="https://s2.loli.net/2022/12/07/q2X5eHuyI4mFhd3.png" alt="image-20221207130436342"></p>
+<ul>
+<li>同步时时，尽量选择删除缓存，在读少写多的场景下，避免对于缓存过多无效的写操作</li>
+<li>如何保证缓存和数据库数据的同步<ul>
+<li>单体系统：将缓存和数据库操作放到一个事务里</li>
+<li>分布式事务，利用TTC等分布式事务方案</li>
+</ul>
+</li>
+<li>先操作数据库，再删除缓存，原因如下图所示</li>
+</ul>
+<p><img src="https://s2.loli.net/2022/12/07/3l9o5Ljei7Ww6UN.png" alt="image-20221207130033856"></p>
+<h4 id="Read-Write-Through-Pattern（读写穿透）"><a href="#Read-Write-Through-Pattern（读写穿透）" class="headerlink" title="Read/Write Through Pattern（读写穿透）"></a>Read/Write Through Pattern（读写穿透）</h4><blockquote>
+<p>将缓存和数据库的同步整合为一个服务，由服务来维护一致性，减轻应用程序的职责。调用者调用该服务，无需关心缓存的一致性的问题。开发比较少遇到的原因是性能问题以及服务开发和维护成本。</p>
+</blockquote>
+<h4 id="Write-Behind-Caching-Pattern（异步缓存写入）"><a href="#Write-Behind-Caching-Pattern（异步缓存写入）" class="headerlink" title="Write Behind Caching Pattern（异步缓存写入）"></a>Write Behind Caching Pattern（异步缓存写入）</h4><blockquote>
+<p>调用者操作缓存后，由其他线程异步的将缓存数据持久化到数据库，保证数据的一致性。缺点是数据一致性难以保证，存在数数据库还没有更新，缓存服务宕机的风险。</p>
+<p>常用于一些数据经常变化，但是对数据一致性要求没有太高的场景，比如浏览量、点赞量等。</p>
+</blockquote>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p><img src="https://s2.loli.net/2022/12/07/hMVGkb5TuntivD3.png" alt="image-20221207130139744"></p>
+<h3 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h3><blockquote>
+<p>缓存穿透是指客户端请求的数据在缓存中和数据库中都不存在，缓存不会生效，这些请求会到存储层去查询，大量请求就会落到数据库中。</p>
+<p>攻击者利用不存在的key频繁攻击应用，大量请求攻击数据库，导致数据库压力过大甚至引起数据库服务的宕机。</p>
+</blockquote>
+<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><ul>
+<li><p>接口校验</p>
+<p>在接口层增加权限校验，拦截一些不符合逻辑的请求</p>
+</li>
+<li><p>缓存空对象</p>
+<p>缓存和数据库都没有时，将key-value写成key-空对象写入缓存，设置较短缓存有效期（减少数据一致性带来影响），有效降低攻击者短时间内反复用同一个id暴力攻击</p>
+<p>缺点：占用缓存中额外的内存开销，有可能造成短时间内数据不一致的问题</p>
+</li>
+<li><p>布隆（bloomfilter类似于hash set结构）</p>
+<p>用于判断某个元素是否存在于集合中，不存在就直接返回。该过滤器的关键就是hash算法和容器的大小</p>
+<p>缺点：实现复杂，存在误判的可能性</p>
+</li>
+</ul>
+<p><img src="https://s2.loli.net/2022/12/07/zFZL4klGurU5nsh.png" alt="image-20221207151744982"></p>
+<h4 id="缓存空对象"><a href="#缓存空对象" class="headerlink" title="缓存空对象"></a>缓存空对象</h4><p><img src="https://s2.loli.net/2022/12/07/kSb1oFrZdg7LwCt.png" alt="image-20221207153521213"></p>
+<h4 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h4><p><img src="https://s2.loli.net/2022/12/07/nVrTpmGehDBR1tc.png" alt="image-20221207165554772"></p>
+<h3 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h3><blockquote>
+<p>缓存雪崩指数据大量缓存的key同时失效或者redis宕机，导致大量请求到达数据库。</p>
+</blockquote>
+<h4 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h4><ul>
+<li>缓存数据的过期时间TTL设置随机，防止大量数据同一时间过期</li>
+<li>搭建redis集群将热点数据均匀分布到不用的缓存数据库，提高服务的可用性</li>
+<li>缓存业务添加降低限流策略</li>
+<li>添加多级缓存（nginx，jvm等）</li>
+</ul>
+<p><img src="https://s2.loli.net/2022/12/07/GYOMxliwnWsDJKX.png" alt="image-20221207165927327"></p>
+<h3 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h3><blockquote>
+<p>缓存击穿问题又称为热点key问题，一个高并发访问并且缓存重建业务较为复杂的Key过期，大量请求访问会在瞬间给数据库带来巨大的压力</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2022/12/07/ztaTWlLHi8nA4h7.png" alt="image-20221207175832982"></p>
+<h4 id="解决方案-2"><a href="#解决方案-2" class="headerlink" title="解决方案"></a>解决方案</h4><ul>
+<li><p>设置热点数据永不过期</p>
+</li>
+<li><p>接口限流和熔断降级</p>
+</li>
+<li><p>加互斥锁</p>
+<blockquote>
+<p>缺点是线程等待，性能较差</p>
+</blockquote>
+</li>
+</ul>
+<p><img src="https://s2.loli.net/2022/12/07/kF6sXAYJ2vfzD8E.png" alt="image-20221207232540016"></p>
+<ul>
+<li>逻辑过期</li>
+</ul>
+<p><img src="https://s2.loli.net/2022/12/07/H6amPdi5CQcXE98.png" alt="image-20221207233126773"></p>
+<p><img src="https://s2.loli.net/2022/12/07/5J3YcuEqb7f48Fh.png" alt="image-20221207233151021"></p>
+<h4 id="基于互斥锁方式解决缓存击穿问题"><a href="#基于互斥锁方式解决缓存击穿问题" class="headerlink" title="基于互斥锁方式解决缓存击穿问题"></a>基于互斥锁方式解决缓存击穿问题</h4><p><img src="https://s2.loli.net/2022/12/07/LkSYNiWOZIyQUA7.png" alt="image-20221207234809088"></p>
+<p><img src="https://s2.loli.net/2022/12/07/5L8SGvTHeBCzjZ6.png" alt="image-20221207234342417"></p>
+<h4 id="基于逻辑过期方式解决缓存击穿问题"><a href="#基于逻辑过期方式解决缓存击穿问题" class="headerlink" title="基于逻辑过期方式解决缓存击穿问题"></a>基于逻辑过期方式解决缓存击穿问题</h4><p><img src="https://s2.loli.net/2022/12/08/KmPabMiYlzNRBeD.png" alt="image-20221208110609702"></p>
+<h3 id="缓存工具封装"><a href="#缓存工具封装" class="headerlink" title="缓存工具封装"></a>缓存工具封装</h3><h2 id="优惠券秒杀"><a href="#优惠券秒杀" class="headerlink" title="优惠券秒杀"></a>优惠券秒杀</h2><h3 id="全局唯一ID"><a href="#全局唯一ID" class="headerlink" title="全局唯一ID"></a>全局唯一ID</h3><p> <img src="https://s2.loli.net/2022/12/09/slDtdWVB3NoS8cK.png" alt="image-20221209134143378"></p>
+<h4 id="全局ID生成器"><a href="#全局ID生成器" class="headerlink" title="全局ID生成器"></a>全局ID生成器</h4><blockquote>
+<p>一种分布式系统下用来生成全局唯一ID的工具</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2022/12/09/bXzjd5K2T8aZYm6.png" alt="image-20221209134432906"></p>
+<p><img src="https://s2.loli.net/2022/12/09/lJLkDCiUfyn4Bh8.png" alt="image-20221209134920012"></p>
+<p>ID的组成部分</p>
+<ul>
+<li>符号位：1bit，0表示正数</li>
+<li>时间戳：31bit，以秒为单位</li>
+<li>序列号：32bit，秒以内的计数器，支持每秒产生2^32不同的ID</li>
+</ul>
+<p><img src="https://s2.loli.net/2022/12/09/G4hw72B91jHMElX.png" alt="image-20221209160509685"></p>
+<h4 id="实现优惠券秒杀下单"><a href="#实现优惠券秒杀下单" class="headerlink" title="实现优惠券秒杀下单"></a>实现优惠券秒杀下单</h4><p><img src="https://s2.loli.net/2022/12/09/WJ3Q7SLM6KvxVgw.png" alt="image-20221209163723219"></p>
+<h3 id="库存超卖问题分析"><a href="#库存超卖问题分析" class="headerlink" title="库存超卖问题分析"></a>库存超卖问题分析</h3><p><img src="https://s2.loli.net/2022/12/12/eGF71HCacu5BLzK.png" alt="image-20221212093954792"></p>
+<p><img src="https://s2.loli.net/2022/12/12/6DoUxsu2c8RpeXP.png" alt="image-20221211224102371"></p>
+<h4 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h4><ul>
+<li>版本号法</li>
+</ul>
+<blockquote>
+<p>通过版本标识数据有没有变化</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2022/12/12/t78GfzwIYuF2ea1.png" alt="image-20221212094057983"></p>
+<ul>
+<li>CAS(compare and swap)法</li>
+</ul>
+<blockquote>
+<p>使用库存代替版本</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2022/12/12/BRTgX7YwUbiA9xh.png" alt="image-20221212094557983"></p>
+<h4 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h4><p><img src="https://s2.loli.net/2022/12/12/yhasicjBFZ1LfVk.png" alt="image-20221212132007970"></p>
+<h3 id="一人一单"><a href="#一人一单" class="headerlink" title="一人一单"></a>一人一单</h3><p><img src="https://s2.loli.net/2022/12/12/GEkdUqSaF4nyvBp.png" alt="image-20221212133704520"></p>
+<h3 id="集群下的并发安全问题"><a href="#集群下的并发安全问题" class="headerlink" title="集群下的并发安全问题"></a>集群下的并发安全问题</h3><p><img src="https://s2.loli.net/2022/12/12/x3hNzmYkgry9bJR.png" alt="image-20221212155303894"></p>
+<p><img src="https://s2.loli.net/2022/12/12/1co8Ar7NpsXnOik.png" alt="image-20221212155642926"></p>
+<h4 id="单体模式"><a href="#单体模式" class="headerlink" title="单体模式"></a>单体模式</h4><blockquote>
+<p>synchronized是通过JVM内部的监视器控制线程的</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2022/12/12/D8UIathcmLGzYMi.png" alt="image-20221212165424079"></p>
+<h4 id="集群模式"><a href="#集群模式" class="headerlink" title="集群模式"></a>集群模式</h4><p><img src="https://s2.loli.net/2022/12/12/po2scJHA8WqmO6a.png" alt="image-20221212165505662"></p>
+<h2 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h2><p><img src="https://s2.loli.net/2022/12/12/FExA8zQkMcdDpeX.png" alt="image-20221212165807301"></p>
+<p><img src="https://s2.loli.net/2022/12/12/PtTVmH4O1bEnS9U.png" alt="image-20221212165914742"></p>
+<h3 id="分布式锁简介"><a href="#分布式锁简介" class="headerlink" title="分布式锁简介"></a>分布式锁简介</h3><blockquote>
+<p>分布式锁：满足分布式系统或集群模式下多线程可见并且互斥的锁。</p>
+</blockquote>
+<p><img src="C:\Users\YuanJW\AppData\Roaming\Typora\typora-user-images\image-20221212170156395.png" alt="image-20221212170156395"></p>
+<h3 id="分布式锁的实现"><a href="#分布式锁的实现" class="headerlink" title="分布式锁的实现"></a>分布式锁的实现</h3><p><img src="https://s2.loli.net/2022/12/12/Sfg4UxAdT5mWMHv.png" alt="image-20221212170954214"></p>
+<h3 id="基于Redis的分布式锁"><a href="#基于Redis的分布式锁" class="headerlink" title="基于Redis的分布式锁"></a>基于Redis的分布式锁</h3><h4 id="获取锁"><a href="#获取锁" class="headerlink" title="获取锁"></a>获取锁</h4><p><img src="https://s2.loli.net/2022/12/12/RhzDsJ4MfBSVLdT.png" alt="image-20221212172255569"></p>
+<h4 id="释放锁"><a href="#释放锁" class="headerlink" title="释放锁"></a>释放锁</h4><p><img src="https://s2.loli.net/2022/12/12/vq19wijQOpNIJKn.png" alt="image-20221212172425586"></p>
+<p><img src="https://s2.loli.net/2022/12/12/FpwEqedZ9kDhMvy.png" alt="image-20221212171913934"></p>
+<h4 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h4><p>在setnx和expire语句执行之间，服务发生了宕机，锁的过期时间就添加失败</p>
+<p><img src="https://s2.loli.net/2022/12/12/MbBN1qUjyzlVsxE.png" alt="image-20221212173317049"></p>
+<h4 id="获取锁-1"><a href="#获取锁-1" class="headerlink" title="获取锁"></a>获取锁</h4><p><img src="https://s2.loli.net/2022/12/12/8GQqi7h6j1xdyg3.png" alt="image-20221212173514881"></p>
+<p><img src="https://s2.loli.net/2022/12/12/JC5NpZhe3nAVRSb.png" alt="image-20221212173614905"></p>
+<h3 id="分布式锁误删问题"><a href="#分布式锁误删问题" class="headerlink" title="分布式锁误删问题"></a>分布式锁误删问题</h3><p><img src="https://s2.loli.net/2022/12/13/KfMFde1lV8upT9q.png" alt="image-20221213104203635"></p>
+<p>线程1业务阻塞后锁超时过期，线程2拿到了锁执行业务，此时线程1阻塞业务执行完毕，误删了线程2的锁，导致线程3拿到了锁，执行业务，导致了两个线程同时执行同一个业务</p>
+<h4 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h4><blockquote>
+<p>获取锁标识并判断是否一致，释放锁验证是否是该线程的锁</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2022/12/13/J4NEZ1srHaKGiPT.png" alt="image-20221213104353629"></p>
+<p><img src="https://s2.loli.net/2022/12/13/c6hZqDYzUndKMLF.png" alt="image-20221213104836276"></p>
+<h4 id="改进Redis分布式锁"><a href="#改进Redis分布式锁" class="headerlink" title="改进Redis分布式锁"></a>改进Redis分布式锁</h4><p><img src="https://s2.loli.net/2022/12/13/PsGFJ9qAR3CcwD4.png" alt="image-20221213111339279"></p>
+<h3 id="分布式锁的原子性问题"><a href="#分布式锁的原子性问题" class="headerlink" title="分布式锁的原子性问题"></a>分布式锁的原子性问题</h3><p><img src="https://s2.loli.net/2022/12/13/hHWEtOoTYvriAmL.png" alt="image-20221213142911540"></p>
+<p>线程1在获取锁标识判断一致后，将要执行释放锁的操作时，线程1发生由于JVM垃圾回收机制等原因发生了阻塞，锁没有被释放但过期后被释放，线程2执行时获取锁，线程1阻塞结束执行了释放锁的操作，导致线程2的锁被释放，线程3此时获取锁导致了两个线程并行执行。</p>
+<p><img src="https://s2.loli.net/2022/12/13/tnYdmzpeNJVwF83.png" alt="image-20221213143602261"></p>
+<h3 id="Redis的Lua的脚本"><a href="#Redis的Lua的脚本" class="headerlink" title="Redis的Lua的脚本"></a>Redis的Lua的脚本</h3><p>Redis提供了Lua脚本功能，在一个脚本中编写多条Redis命令，确保多条命令执行时的原子性。</p>
+<blockquote>
+<p>Lua是一种编程语言，它的基本语法：<a target="_blank" rel="noopener" href="https://www.runoob.com/lua/lua-tutorial.html">https://www.runoob.com/lua/lua-tutorial.html</a></p>
+</blockquote>
+<h4 id="基本语法"><a href="#基本语法" class="headerlink" title="基本语法"></a>基本语法</h4><p><img src="https://s2.loli.net/2022/12/13/9UXclOxT8QqwH5M.png" alt="image-20221213144906636"></p>
+<h4 id="执行脚本"><a href="#执行脚本" class="headerlink" title="执行脚本"></a>执行脚本</h4><p><img src="https://s2.loli.net/2022/12/13/xgyQ68DA52fbmoh.png" alt="image-20221213150019865"></p>
+<p><img src="https://s2.loli.net/2022/12/13/Pwo2QAu3it4veRa.png" alt="image-20221213145512377"></p>
+<p><img src="https://s2.loli.net/2022/12/13/Ld3itrB7MsJ9XZc.png" alt="image-20221213145547488"></p>
+<p><img src="https://s2.loli.net/2022/12/13/bvJphKMdcIQEt3z.png" alt="image-20221213150601394"></p>
+<p><img src="https://s2.loli.net/2022/12/13/IceEO5yblYUjqMi.png" alt="image-20221213150614674"></p>
+<h4 id="基于Lua脚本的释放锁"><a href="#基于Lua脚本的释放锁" class="headerlink" title="基于Lua脚本的释放锁"></a>基于Lua脚本的释放锁</h4><p><img src="https://s2.loli.net/2022/12/13/LfFKmXvMG6xkiRq.png" alt="image-20221213153252755"></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 比较线程标示与锁中的标示是否一致</span></span><br><span class="line"><span class="keyword">if</span>(redis.call(<span class="string">&#x27;get&#x27;</span>, KEYS[<span class="number">1</span>]) ==  ARGV[<span class="number">1</span>]) <span class="keyword">then</span></span><br><span class="line">    <span class="comment">-- 释放锁 del key</span></span><br><span class="line">    <span class="keyword">return</span> redis.call(<span class="string">&#x27;del&#x27;</span>, KEYS[<span class="number">1</span>])</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Java调用lua脚本改造分布式锁"><a href="#Java调用lua脚本改造分布式锁" class="headerlink" title="Java调用lua脚本改造分布式锁"></a>Java调用lua脚本改造分布式锁</h4><p><img src="https://s2.loli.net/2022/12/13/TgLlKFady2Q475Y.png" alt="image-20221213160450825"></p>
+<h4 id="总结-3"><a href="#总结-3" class="headerlink" title="总结"></a>总结</h4><p><img src="https://s2.loli.net/2022/12/13/hBGUzyZcLJao41C.png" alt="image-20221213164025997"></p>
+<h3 id="基于Redission的分布式锁优化"><a href="#基于Redission的分布式锁优化" class="headerlink" title="基于Redission的分布式锁优化"></a>基于Redission的分布式锁优化</h3><p>基于setnx实现的分布式锁存在下面的问题</p>
+<ul>
+<li>不可重入：同一线程无法多次获取同一把锁</li>
+<li>不可重试：获取锁只尝试一次就返回false，没有重试机制</li>
+<li>超时释放：可以避免死锁，但仍然存在一定的安全隐患。例如业务执行耗时比锁的超时时间长，导致了锁的提前释放等</li>
+<li>主从一致性：Redis提供了主从集群模式，主从同步存在延迟。当主节点宕机时，从节点并未同步主节点的锁数据时，会导致多个线程拿到锁的情况，产生安全问题</li>
+</ul>
+<p><img src="https://s2.loli.net/2022/12/13/6BdIA4WfcgsNRGO.png" alt="image-20221213173148132"></p>
+<h3 id="Redission"><a href="#Redission" class="headerlink" title="Redission"></a>Redission</h3><p><img src="https://s2.loli.net/2022/12/13/JMAvl4PRKSVqtZB.png" alt="image-20221213173415985"></p>
+<p>官网：<a target="_blank" rel="noopener" href="https://redisson.org/">https://redisson.org/</a></p>
+<h4 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h4><h5 id="引入依赖"><a href="#引入依赖" class="headerlink" title="引入依赖"></a>引入依赖</h5><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- Redisson --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.redisson<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>redisson<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;redission.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="配置客户端"><a href="#配置客户端" class="headerlink" title="配置客户端"></a>配置客户端</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="keyword">public</span> RedissonClient <span class="title function_">redissonClient</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 创建配置类</span></span><br><span class="line">    <span class="type">Config</span> <span class="variable">config</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Config</span>();</span><br><span class="line">    <span class="comment">// 添加配置</span></span><br><span class="line">    config.useSingleServer()</span><br><span class="line">            .setAddress(SCHEMA_PREFIX + host + <span class="string">&quot;:&quot;</span> + port)</span><br><span class="line">            .setPassword(password)</span><br><span class="line">            .setTimeout(<span class="number">3000</span>)</span><br><span class="line">            .setPingConnectionInterval(<span class="number">30000</span>)</span><br><span class="line">            .setDatabase(Integer.parseInt(database));</span><br><span class="line">    <span class="comment">// 创建Redisson对象</span></span><br><span class="line">    <span class="keyword">return</span> Redisson.create(config);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="使用分布式锁"><a href="#使用分布式锁" class="headerlink" title="使用分布式锁"></a>使用分布式锁</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 通过Redisson获取可重入锁</span></span><br><span class="line"><span class="type">RLock</span> <span class="variable">lock</span> <span class="operator">=</span> redisLockService.getRLock(REDIS_LOCK_COUPON_HISTORY);</span><br><span class="line"><span class="comment">// 尝试获取可重入锁</span></span><br><span class="line"><span class="type">boolean</span> <span class="variable">isLock</span> <span class="operator">=</span> lock.tryLock(<span class="number">1</span>, <span class="number">10</span>, TimeUnit.SECONDS);</span><br><span class="line"><span class="keyword">if</span> (!isLock) &#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">ServiceException</span>(<span class="string">&quot;一人只允许购买一张优惠券&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">	...</span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">	<span class="comment">// 释放可重入锁</span></span><br><span class="line">    lock.unlock();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Redisson可重入锁原理"><a href="#Redisson可重入锁原理" class="headerlink" title="Redisson可重入锁原理"></a>Redisson可重入锁原理</h3><p><img src="https://s2.loli.net/2022/12/15/blm7wuRDPcNJahv.png" alt="image-20221215110558010"></p>
+<p><img src="https://s2.loli.net/2022/12/15/WvbasGV4d3BXl9E.png" alt="image-20221215135354623"></p>
+<h4 id="获取可重入锁的Lua脚本"><a href="#获取可重入锁的Lua脚本" class="headerlink" title="获取可重入锁的Lua脚本"></a>获取可重入锁的Lua脚本</h4><p><img src="https://s2.loli.net/2022/12/15/RPEt3FgGyzxqiAK.png" alt="image-20221215140201072"></p>
+<h4 id="释放可重入锁的Lua脚本"><a href="#释放可重入锁的Lua脚本" class="headerlink" title="释放可重入锁的Lua脚本"></a>释放可重入锁的Lua脚本</h4><p><img src="https://s2.loli.net/2022/12/15/9Pd8fHkDFwLCpi2.png" alt="image-20221215140328868"></p>
+<h4 id="总结-4"><a href="#总结-4" class="headerlink" title="总结"></a>总结</h4><blockquote>
+<p>利用一个Hash结构记录获取锁的线程和重入的次数，Redisson底层的核心就是Lua脚本</p>
+</blockquote>
+<h4 id="Redis分布式锁原理"><a href="#Redis分布式锁原理" class="headerlink" title="Redis分布式锁原理"></a><img src="https://s2.loli.net/2022/12/15/hro2GlZju7HIvJb.png" alt="image-20221215153730992">Redis分布式锁原理</h4><ul>
+<li>可重入性：利用ConcurrentMap存储记录线程id和重入次数</li>
+<li>可重试：利用信号量和PubSub功能实现等待、唤醒、获取锁失败的重试机制</li>
+<li>超时续约：利用WatchDog，每隔一段时间（leaseTime/3）,重置超时时间</li>
+</ul>
+<p><img src="https://s2.loli.net/2022/12/15/iyFqvwflOrRx8bK.png" alt="image-20221215182257133"></p>
+<h3 id="Redisson的multiLock原理"><a href="#Redisson的multiLock原理" class="headerlink" title="Redisson的multiLock原理"></a>Redisson的multiLock原理</h3><h4 id="Redisson分布式锁的主从一致性问题"><a href="#Redisson分布式锁的主从一致性问题" class="headerlink" title="Redisson分布式锁的主从一致性问题"></a>Redisson分布式锁的主从一致性问题</h4><p><img src="https://s2.loli.net/2022/12/15/CiguE1vF5LYyJ67.png" alt="image-20221215202909112"></p>
+<p><img src="https://s2.loli.net/2022/12/15/HauGOjnVUyskpY8.png" alt="image-20221215203304279"></p>
+<p><img src="https://s2.loli.net/2022/12/15/GDTR2H7oEnyeYp8.png" alt="image-20221215204206587"></p>
+<h3 id="总结-5"><a href="#总结-5" class="headerlink" title="总结"></a>总结</h3><p><img src="https://s2.loli.net/2022/12/16/CR3MFwT4bslUiW1.png" alt="image-20221216094654492"></p>
+<h2 id="秒杀优化"><a href="#秒杀优化" class="headerlink" title="秒杀优化"></a>秒杀优化</h2><h3 id="异步秒杀思路"><a href="#异步秒杀思路" class="headerlink" title="异步秒杀思路"></a>异步秒杀思路</h3><h4 id="并行"><a href="#并行" class="headerlink" title="并行"></a>并行</h4><p><img src="https://s2.loli.net/2022/12/16/5zqOeF2WKMn7kmx.png" alt="image-20221216104022591"></p>
+<p><img src="https://s2.loli.net/2022/12/16/uSeKZg9VrMwidnf.png" alt="image-20221216105527671"></p>
+<p><img src="https://s2.loli.net/2022/12/16/Ukw2AD1PGQros5Y.png" alt="image-20221216110149724"></p>
+<p>​    <img src="https://s2.loli.net/2022/12/17/dr7EYAIlDCvUxuP.png" alt="image-20221217005201496"></p>
+<p>使用Lua脚本判断秒杀库存和一人一单状态，保证执行的原子性</p>
+<p><img src="https://s2.loli.net/2022/12/18/FBS9lADK2P6tYdi.png" alt="image-20221218025955470"></p>
+<h4 id="总结-6"><a href="#总结-6" class="headerlink" title="总结"></a>总结</h4><h5 id="秒杀业务的优化思路"><a href="#秒杀业务的优化思路" class="headerlink" title="秒杀业务的优化思路"></a>秒杀业务的优化思路</h5><ul>
+<li>利用Redis和Lua脚本完成校验判断和抢单业务</li>
+<li>将下单业务放到阻塞队列，利用线程池异步下单</li>
+</ul>
+<h5 id="基于阻塞队列的异步秒杀的问题"><a href="#基于阻塞队列的异步秒杀的问题" class="headerlink" title="基于阻塞队列的异步秒杀的问题"></a>基于阻塞队列的异步秒杀的问题</h5><ul>
+<li>阻塞队列的内存限制问题（阻塞队列来自JVM）</li>
+<li>数据安全问题（阻塞队列中的订单没有被消费完，却发生了重启或宕机等事故）</li>
+</ul>
+<h2 id="Redis消息队列"><a href="#Redis消息队列" class="headerlink" title="Redis消息队列"></a>Redis消息队列</h2><h3 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h3><p>消息队列（Message Queue）存放消息的队列，最简单的消息队列模型包括三个角色</p>
+<ul>
+<li>消费队列：存储和管理消息，称为消息代理（Message Broker）</li>
+<li>生产者：发送消息到消息队列</li>
+<li>消费者：从消息队列获取消息并处理消息</li>
+</ul>
+<p><img src="https://s2.loli.net/2022/12/18/eqHNGAbi3tCfO4l.png" alt="image-20221218052232089"></p>
+<p><img src="https://s2.loli.net/2022/12/18/WpQygCYOZHcot1B.png" alt="image-20221218052650676"></p>
+<p>Redis提供了三种不同的方式实现消息队列</p>
+<ul>
+<li>List：基于List结构模拟消息队列</li>
+<li>PubSub：基本的点对点消息模型</li>
+<li>Stream：完善的消息队列模型</li>
+</ul>
+<p><img src="https://s2.loli.net/2022/12/18/f8noqXsgz7WCcxH.png" alt="image-20221218052713338"></p>
+<h3 id="基于List模拟消息队列"><a href="#基于List模拟消息队列" class="headerlink" title="基于List模拟消息队列"></a>基于List模拟消息队列</h3><p>消息队列（Message Queue）存放和管理消息的队列，而Redis的List数据结构是一个双向链表。</p>
+<p><img src="https://s2.loli.net/2022/12/18/OAvTkjYcC8QP1U9.png" alt="image-20221218054419266"></p>
+<p><img src="https://s2.loli.net/2022/12/18/Oam4W31Rh8XjYPu.png" alt="image-20221218054947741"></p>
+<p><img src="https://s2.loli.net/2022/12/18/3SiB7kOYKbaheUI.png" alt="image-20221218055421128"></p>
+<p><img src="https://s2.loli.net/2022/12/18/Nx2giLyeI7bQ4mj.png" alt="image-20221218055432386"></p>
+<p><img src="https://s2.loli.net/2022/12/18/kyxBHNrDaYG9V5i.png" alt="image-20221218055445213"></p>
+<p><img src="https://s2.loli.net/2022/12/18/ZAQYL2iFaVXDSH7.png" alt="image-20221218054241305"></p>
+<h3 id="基于PubSub的消息队列"><a href="#基于PubSub的消息队列" class="headerlink" title="基于PubSub的消息队列"></a>基于PubSub的消息队列</h3><blockquote>
+<p>PubSub（发布/订阅）是Redis引入的消息传递模型，消费者可以订阅一个或多个channel，生产者向对应channel发送消息后，所有的订阅者都能收到相关信息。</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2022/12/18/FZtgOT9IQ6vpaSY.png" alt="image-20221218162046630"></p>
+<p><img src="https://s2.loli.net/2022/12/18/bkjiroyzlRn1d74.png" alt="image-20221218162753133"></p>
+<h4 id="总结-7"><a href="#总结-7" class="headerlink" title="总结"></a>总结</h4><p><img src="https://s2.loli.net/2022/12/18/QnTlWRUwjVzv3xb.png" alt="image-20221218162847614"></p>
+<h5 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h5><ul>
+<li>采用发布订阅模式，支持多生产、多消费</li>
+</ul>
+<h5 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h5><ul>
+<li>不支持数据持久化</li>
+<li>无法避免消息丢失</li>
+<li>消息堆积存在上限，超出时数据丢失</li>
+<li>消息订阅者停止时，消息发送会丢失</li>
+</ul>
+<h3 id="Stream的单消费模式"><a href="#Stream的单消费模式" class="headerlink" title="Stream的单消费模式"></a>Stream的单消费模式</h3><blockquote>
+<p>Stream是Redis引入的一种新的数据类型，可以实现功能更加完善的消息队列</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2022/12/18/J3omhQuCP6DdB2j.png" alt="image-20221218163659720"></p>
+<h4 id="基于Stream发送消息"><a href="#基于Stream发送消息" class="headerlink" title="基于Stream发送消息"></a>基于Stream发送消息</h4><p><img src="https://s2.loli.net/2022/12/18/bf8GQhn35LtWdDi.png" alt="image-20221218164450534"></p>
+<h4 id="基于Stream读取消息"><a href="#基于Stream读取消息" class="headerlink" title="基于Stream读取消息"></a>基于Stream读取消息</h4><p><img src="https://s2.loli.net/2022/12/18/NsWgVjEA6B5SmJo.png" alt="image-20221218185944434"></p>
+<p><img src="https://s2.loli.net/2022/12/18/9f3XIsNozGWijLp.png" alt="image-20221218185713307"></p>
+<p><img src="https://s2.loli.net/2022/12/18/IROth2TjuwgGYKm.png" alt="image-20221218190349748"></p>
+<p><img src="https://s2.loli.net/2022/12/19/ZebrtSYIOyf1l5Q.png" alt="image-20221219122859992"></p>
+<p><img src="https://s2.loli.net/2022/12/19/q9zJHcZYvIC1GeK.png" alt="image-20221219123108407"></p>
+<p><img src="https://s2.loli.net/2022/12/19/t2OieYqwh3P6x5k.png" alt="image-20221219123158957"></p>
+<blockquote>
+<p>当指定起始ID为$时，代表读取最新的消息，如果处理一条消息的过程中，出现了超过1条以上的消息到达队列，则下次获取时，只能获得最新的一条消息，会出现漏读消息的问题。</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2022/12/19/n2tHJ1PuXhKzIU6.png" alt="image-20221219123354171"></p>
+<h4 id="总结-8"><a href="#总结-8" class="headerlink" title="总结"></a>总结</h4><h5 id="优点："><a href="#优点：" class="headerlink" title="优点："></a>优点：</h5><ul>
+<li>消息可回溯</li>
+<li>一个消息可以被多个消费者读取</li>
+<li>支持阻塞读取</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li><p>有消息漏读的风险</p>
+<p><img src="https://s2.loli.net/2022/12/19/M38QX4pJ5KdBHVU.png" alt="image-20221219130332819"></p>
+</li>
+</ul>
+<h3 id="基于Stream的消息队列-消费者组"><a href="#基于Stream的消息队列-消费者组" class="headerlink" title="基于Stream的消息队列-消费者组"></a>基于Stream的消息队列-消费者组</h3><p><img src="https://s2.loli.net/2022/12/19/q397zQa6ZfDdruY.png"></p>
+<p>消费者组（Consumer Group）：将多个消费者划分到一个组中，监听同一个队列</p>
+<ul>
+<li>消息分流：队列中的消息会分流给组内的不同的消费者，而不是重复消费，从而加快消费处理的速度</li>
+<li>消息提示：消费者组会维护一个标示，记录最后一个被处理的消息，由于stream中的小消息本身就支持持久化，当消费者宕机重启后，消费者还会从标示之后读取消息，确保每一个消息都会被消费（避免消息漏读的情况）</li>
+<li>消息确认：消费者获取消息后，消息处于pending状态，存入一个pending-list。当处理完成后通过XACK来确认消息，并标记消息为已处理，并从pending-list移除（避免消息丢失的情况）</li>
+</ul>
+<p><img src="https://s2.loli.net/2022/12/19/HT6AkjswJtaeYrZ.png" alt="image-20221219131356818"></p>
+<p><img src="https://s2.loli.net/2022/12/19/xO13leNUS6GmZrX.png" alt="image-20221219132919466"></p>
+<p><img src="https://s2.loli.net/2022/12/19/SEIaOvq7JXibQD8.png" alt="image-20221219135311350"></p>
+<h3 id="基于Stream的消费队列实现异步秒杀"><a href="#基于Stream的消费队列实现异步秒杀" class="headerlink" title="基于Stream的消费队列实现异步秒杀"></a>基于Stream的消费队列实现异步秒杀</h3><h2 id="达人点评"><a href="#达人点评" class="headerlink" title="达人点评"></a>达人点评</h2><h3 id="发布点评笔记"><a href="#发布点评笔记" class="headerlink" title="发布点评笔记"></a>发布点评笔记</h3><p><img src="https://s2.loli.net/2022/12/21/wTZbgtrJ8IlXjMO.png" alt="image-20221221135202338"></p>
+<h3 id="点赞"><a href="#点赞" class="headerlink" title="点赞"></a>点赞</h3><p><img src="https://s2.loli.net/2022/12/22/U76oNK1MgXtJP9p.png" alt="image-20221222235253214"></p>
+<h3 id="点赞排行榜"><a href="#点赞排行榜" class="headerlink" title="点赞排行榜"></a>点赞排行榜</h3><p><img src="https://s2.loli.net/2022/12/22/32NwsSYg5HByKEA.png" alt="image-20221222235326299"></p>
+<p><img src="https://s2.loli.net/2022/12/23/YxDkuRKX82AmPEb.png" alt="image-20221223000128319"></p>
+<p><img src="https://s2.loli.net/2022/12/23/WyPaHSBI39nX8Oh.png" alt="image-20221223000541237"></p>
+<p><img src="https://s2.loli.net/2022/12/23/9shGdCW8XKzPgnx.png" alt="image-20221223000558420"></p>
+<p> <img src="https://s2.loli.net/2022/12/23/plinoqzv9CbNeLm.png" alt="image-20221223222109390"></p>
+<h2 id="好友关注"><a href="#好友关注" class="headerlink" title="好友关注"></a>好友关注</h2><h3 id="关注和取关"><a href="#关注和取关" class="headerlink" title="关注和取关"></a>关注和取关</h3><p><img src="https://s2.loli.net/2023/01/02/rL9peY4AZhSNxiK.png" alt="image-20230102162103145"></p>
+<h3 id="共同关注"><a href="#共同关注" class="headerlink" title="共同关注"></a>共同关注</h3><blockquote>
+<p>利用Redis中set数据结构实现共同关注功能。</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/02/qVyfb5gOxhGJC9p.png" alt="image-20230102225058098"></p>
+<h3 id="关注和推送"><a href="#关注和推送" class="headerlink" title="关注和推送"></a>关注和推送</h3><blockquote>
+<p>关注推送也叫Feed流，通过下拉刷新获取新的信息。</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/03/EboQNnKmeFqxgki.png" alt="image-20230103104020197"></p>
+<p><img src="https://s2.loli.net/2023/01/03/TYRFWujHk13Qtye.png" alt="image-20230103104103941"></p>
+<p><img src="https://s2.loli.net/2023/01/03/AROVxcqECmDMp6h.png" alt="image-20230103104231504"></p>
+<h4 id="拉模式"><a href="#拉模式" class="headerlink" title="拉模式"></a>拉模式</h4><p><img src="https://s2.loli.net/2023/01/03/vxJl3swmyuF8XD4.png" alt="image-20230103104500644"></p>
+<h4 id="推模式"><a href="#推模式" class="headerlink" title="推模式"></a>推模式</h4><p><img src="https://s2.loli.net/2023/01/03/RI6yB18bQAieDm4.png" alt="image-20230103104655290"></p>
+<h4 id="推拉结合"><a href="#推拉结合" class="headerlink" title="推拉结合"></a>推拉结合</h4><p><img src="https://s2.loli.net/2023/01/03/es3iWCZbFnUawKV.png" alt="image-20230103105213174"></p>
+<p><img src="https://s2.loli.net/2023/01/03/dSgZ2NJkAPXGEYu.png" alt="image-20230103105225498"></p>
+<h4 id="推模式实现粉丝推荐"><a href="#推模式实现粉丝推荐" class="headerlink" title="推模式实现粉丝推荐"></a>推模式实现粉丝推荐</h4><p><img src="https://s2.loli.net/2023/01/03/b4iO16xzQr2jtk5.png" alt="image-20230103121331638"></p>
+<p><img src="https://s2.loli.net/2023/01/03/7PJTIjX5lW4zCaU.png" alt="image-20230103122137899"></p>
+<p><img src="https://s2.loli.net/2023/01/03/wMaXg6inIhUylNZ.png" alt="image-20230103135629197"></p>
+<h4 id="实现关注推送页面的滚动分页查询"><a href="#实现关注推送页面的滚动分页查询" class="headerlink" title="实现关注推送页面的滚动分页查询"></a>实现关注推送页面的滚动分页查询</h4><h5 id="按脚标（排名）查询"><a href="#按脚标（排名）查询" class="headerlink" title="按脚标（排名）查询"></a>按脚标（排名）查询</h5><p><img src="https://s2.loli.net/2023/01/03/aCifNl3t69oKpdL.png" alt="image-20230103171623943"></p>
+<p><img src="https://s2.loli.net/2023/01/03/QgkHxsw1T72LMVt.png" alt="image-20230103172512500"></p>
+<blockquote>
+<p>为了防止score相同的情况下，导致偏移量不准确，所以偏移量应该设置为与上一次分页查询结果中，与最小值一样的元素个数。</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/03/6SAYORxZqlE1mdL.png" alt="image-20230103173157185"></p>
+<p><img src="https://s2.loli.net/2023/01/03/8sUQ4N9y62ZYzre.png" alt="image-20230103173437310"></p>
+<h2 id="附近店铺"><a href="#附近店铺" class="headerlink" title="附近店铺"></a>附近店铺</h2><blockquote>
+<p>GEO就是Geolocation的缩写，代表地理位置，Redis在3.2版本加入了对GEO的支持，允许存储地理坐标信息，帮助我们根据经纬度检索数据</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/03/1DocHQSzJ58ufGs.png" alt="image-20230103213604903"></p>
+<p><img src="https://s2.loli.net/2023/01/03/DEzGhntcgCPH2bs.png" alt="image-20230103214000937"></p>
+<h3 id="常见命令"><a href="#常见命令" class="headerlink" title="常见命令"></a>常见命令</h3><h4 id="添加地理数据"><a href="#添加地理数据" class="headerlink" title="添加地理数据"></a>添加地理数据</h4><p><img src="https://s2.loli.net/2023/01/03/BmFTlNLRj8VS2E7.png" alt="image-20230103214310250"></p>
+<p><img src="https://s2.loli.net/2023/01/03/SrDduofUzCx1WaR.png" alt="image-20230103215308352"></p>
+<p><img src="https://s2.loli.net/2023/01/03/4S5TQWvOYsD79gL.png" alt="image-20230103214435380"></p>
+<h4 id="计算地理距离"><a href="#计算地理距离" class="headerlink" title="计算地理距离"></a>计算地理距离</h4><p><img src="https://s2.loli.net/2023/01/03/8xM3fuybP5BldsR.png" alt="image-20230103214727360"></p>
+<h4 id="搜索附近地理"><a href="#搜索附近地理" class="headerlink" title="搜索附近地理"></a>搜索附近地理</h4><p><img src="https://s2.loli.net/2023/01/03/aRlxMINOPFSdAkU.png" alt="image-20230103215157957"></p>
+<h3 id="附近商铺搜索"><a href="#附近商铺搜索" class="headerlink" title="附近商铺搜索"></a>附近商铺搜索</h3><p><img src="https://s2.loli.net/2023/01/03/jg7VODUwRd2l48T.png" alt="image-20230103215914946"></p>
+<p><img src="https://s2.loli.net/2023/01/04/u7SFLRBOJfvklZb.png" alt="image-20230103222141774"></p>
+<h2 id="用户签到"><a href="#用户签到" class="headerlink" title="用户签到"></a>用户签到</h2><p><img src="https://s2.loli.net/2023/01/05/4NeS2lRfC6YvdTk.png" alt="image-20230105134359071"></p>
+<p><img src="https://s2.loli.net/2023/01/05/vkZdQowE5e2cntr.png" alt="image-20230105134641859"></p>
+<p><img src="https://s2.loli.net/2023/01/05/x7DRPZh1FarT6XQ.png" alt=" "></p>
+<p><img src="https://s2.loli.net/2023/01/05/9P7RDoxhimOF1kd.png" alt="image-20230105144620835"></p>
+<p><img src="https://s2.loli.net/2023/01/05/UIlAyjMvYtmNKrT.png" alt="image-20230105144855288"></p>
+<p><img src="https://s2.loli.net/2023/01/05/SdmHPvwAGVDsU42.png" alt="image-20230105144913949"></p>
+<p><img src="https://s2.loli.net/2023/01/05/4mk1SlbOMrTL7Zf.png" alt="image-20230105145028242"></p>
+<p><img src="https://s2.loli.net/2023/01/05/ljiJWQdx5MCeqvu.png" alt="image-20230105145127510"></p>
+<p><img src="https://s2.loli.net/2023/01/05/QinpjsxveaB5CLN.png" alt="image-20230105145543477"></p>
+<p><img src="https://s2.loli.net/2023/01/05/8Uc1murhMTEjb67.png" alt="image-20230105145712440"></p>
+<h3 id="实现签到功能"><a href="#实现签到功能" class="headerlink" title="实现签到功能"></a>实现签到功能</h3><p><img src="https://s2.loli.net/2023/01/05/yBWLzCURwpshZVf.png" alt="image-20230105150653344"></p>
+<h3 id="统计签到"><a href="#统计签到" class="headerlink" title="统计签到"></a>统计签到</h3><p><img src="https://s2.loli.net/2023/01/06/s6E5UeOfMhI1Kz9.png" alt="image-20230106192904777"></p>
+<h2 id="UV统计"><a href="#UV统计" class="headerlink" title="UV统计"></a>UV统计</h2><h3 id="HyperLogLog用法"><a href="#HyperLogLog用法" class="headerlink" title="HyperLogLog用法"></a>HyperLogLog用法</h3><p><img src="https://s2.loli.net/2023/01/07/BK2liXp4aYVRnfQ.png" alt="image-20230107011541737"></p>
+<p><img src="https://s2.loli.net/2023/01/07/tGIelPjYsNR4iCh.png" alt="image-20230107011601838"></p>
+<p><img src="https://s2.loli.net/2023/01/07/NwSxAOndQmzuPyj.png" alt="image-20230107014901129"></p>
+<h3 id="实现UV统计"><a href="#实现UV统计" class="headerlink" title="实现UV统计"></a>实现UV统计</h3><h4 id="配置UV统计拦截器"><a href="#配置UV统计拦截器" class="headerlink" title="配置UV统计拦截器"></a>配置UV统计拦截器</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UVInterceptor</span> <span class="keyword">implements</span> <span class="title class_">HandlerInterceptor</span> &#123;</span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;redis.key.uv&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String UVKey;</span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> RedisTemplate&lt;String, Object&gt; redisTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">preHandle</span><span class="params">(HttpServletRequest request,</span></span><br><span class="line"><span class="params">                             HttpServletResponse response,</span></span><br><span class="line"><span class="params">                             Object handler)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">date</span> <span class="operator">=</span> LocalDateTime.now()</span><br><span class="line">                .format(DateTimeFormatter.ofPattern(<span class="string">&quot;yyyy-MM-dd&quot;</span>));</span><br><span class="line">        <span class="type">Long</span> <span class="variable">id</span> <span class="operator">=</span> MemberHolder.get().getId();</span><br><span class="line">        redisTemplate.opsForHyperLogLog().add(UVKey + date, id);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="添加拦截器"><a href="#添加拦截器" class="headerlink" title="添加拦截器"></a>添加拦截器</h4><p><img src="https://s2.loli.net/2023/01/07/IWZYGX9ETybakzB.png" alt="image-20230107182657453"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="http://example.com">YuanJW</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2022/12/01/Redis%E5%AE%9E%E6%88%98/">http://example.com/2022/12/01/Redis%E5%AE%9E%E6%88%98/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Redis/">Redis</a></div><div class="post_share"><div class="social-share" data-image="/img/default-cover/45.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/ShareJS/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/ShareJS/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2022/11/06/ElasticSearch/"><img class="next-cover" src="/img/default-cover/12.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">分布式搜索-ElasticSearch</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YuanJW</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">20</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/XiaoYuanJW" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="/2754742370@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E5%AE%9E%E6%88%98"><span class="toc-number">1.</span> <span class="toc-text">Redis实战</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%AD%E4%BF%A1%E7%99%BB%E5%BD%95"><span class="toc-number">1.1.</span> <span class="toc-text">短信登录</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8ESession%E5%AE%9E%E7%8E%B0%E7%99%BB%E5%BD%95"><span class="toc-number">1.1.1.</span> <span class="toc-text">基于Session实现登录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#session%E5%85%B1%E4%BA%AB%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.2.</span> <span class="toc-text">session共享问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8ERedis%E5%AE%9E%E7%8E%B0%E5%85%B1%E4%BA%ABsession%E7%99%BB%E5%BD%95"><span class="toc-number">1.1.3.</span> <span class="toc-text">基于Redis实现共享session登录</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#redis%E4%BB%A3%E6%9B%BFsession%E8%80%83%E8%99%91%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">redis代替session考虑的问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E7%8A%B6%E6%80%81%E7%99%BB%E5%BD%95%E5%88%B7%E6%96%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.4.</span> <span class="toc-text">解决状态登录刷新的问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%95%86%E6%88%B7%E6%9F%A5%E8%AF%A2%E7%BC%93%E5%AD%98"><span class="toc-number">1.2.</span> <span class="toc-text">商户查询缓存</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E7%BC%93%E5%AD%98"><span class="toc-number">1.2.1.</span> <span class="toc-text">什么是缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0Redis%E7%BC%93%E5%AD%98"><span class="toc-number">1.2.2.</span> <span class="toc-text">添加Redis缓存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E6%9B%B4%E6%96%B0%E7%AD%96%E7%95%A5"><span class="toc-number">1.2.3.</span> <span class="toc-text">缓存更新策略</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E5%B8%B8%E8%A7%81%E7%9A%84%E7%BC%93%E5%AD%98%E8%AF%BB%E5%86%99%E7%AD%96%E7%95%A5"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">三种常见的缓存读写策略</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Cache-Aside-Pattern%EF%BC%88%E6%97%81%E8%B7%AF%E7%BC%93%E5%AD%98%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="toc-number">1.2.3.1.1.</span> <span class="toc-text">Cache Aside Pattern（旁路缓存模式）</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Read-Write-Through-Pattern%EF%BC%88%E8%AF%BB%E5%86%99%E7%A9%BF%E9%80%8F%EF%BC%89"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">Read&#x2F;Write Through Pattern（读写穿透）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Write-Behind-Caching-Pattern%EF%BC%88%E5%BC%82%E6%AD%A5%E7%BC%93%E5%AD%98%E5%86%99%E5%85%A5%EF%BC%89"><span class="toc-number">1.2.3.3.</span> <span class="toc-text">Write Behind Caching Pattern（异步缓存写入）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.2.3.4.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F"><span class="toc-number">1.2.4.</span> <span class="toc-text">缓存穿透</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">1.2.4.1.</span> <span class="toc-text">解决方案</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E7%A9%BA%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.2.4.2.</span> <span class="toc-text">缓存空对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-number">1.2.4.3.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9"><span class="toc-number">1.2.5.</span> <span class="toc-text">缓存雪崩</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88-1"><span class="toc-number">1.2.5.1.</span> <span class="toc-text">解决方案</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF"><span class="toc-number">1.2.6.</span> <span class="toc-text">缓存击穿</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88-2"><span class="toc-number">1.2.6.1.</span> <span class="toc-text">解决方案</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E4%BA%92%E6%96%A5%E9%94%81%E6%96%B9%E5%BC%8F%E8%A7%A3%E5%86%B3%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%E9%97%AE%E9%A2%98"><span class="toc-number">1.2.6.2.</span> <span class="toc-text">基于互斥锁方式解决缓存击穿问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E9%80%BB%E8%BE%91%E8%BF%87%E6%9C%9F%E6%96%B9%E5%BC%8F%E8%A7%A3%E5%86%B3%E7%BC%93%E5%AD%98%E5%87%BB%E7%A9%BF%E9%97%AE%E9%A2%98"><span class="toc-number">1.2.6.3.</span> <span class="toc-text">基于逻辑过期方式解决缓存击穿问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%AD%98%E5%B7%A5%E5%85%B7%E5%B0%81%E8%A3%85"><span class="toc-number">1.2.7.</span> <span class="toc-text">缓存工具封装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BC%98%E6%83%A0%E5%88%B8%E7%A7%92%E6%9D%80"><span class="toc-number">1.3.</span> <span class="toc-text">优惠券秒杀</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%A8%E5%B1%80%E5%94%AF%E4%B8%80ID"><span class="toc-number">1.3.1.</span> <span class="toc-text">全局唯一ID</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%A8%E5%B1%80ID%E7%94%9F%E6%88%90%E5%99%A8"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">全局ID生成器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E4%BC%98%E6%83%A0%E5%88%B8%E7%A7%92%E6%9D%80%E4%B8%8B%E5%8D%95"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">实现优惠券秒杀下单</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%93%E5%AD%98%E8%B6%85%E5%8D%96%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="toc-number">1.3.2.</span> <span class="toc-text">库存超卖问题分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B9%90%E8%A7%82%E9%94%81"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">乐观锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-2"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E4%BA%BA%E4%B8%80%E5%8D%95"><span class="toc-number">1.3.3.</span> <span class="toc-text">一人一单</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%86%E7%BE%A4%E4%B8%8B%E7%9A%84%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="toc-number">1.3.4.</span> <span class="toc-text">集群下的并发安全问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8D%95%E4%BD%93%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.3.4.1.</span> <span class="toc-text">单体模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9B%86%E7%BE%A4%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.3.4.2.</span> <span class="toc-text">集群模式</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="toc-number">1.4.</span> <span class="toc-text">分布式锁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%AE%80%E4%BB%8B"><span class="toc-number">1.4.1.</span> <span class="toc-text">分布式锁简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.4.2.</span> <span class="toc-text">分布式锁的实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8ERedis%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="toc-number">1.4.3.</span> <span class="toc-text">基于Redis的分布式锁</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E9%94%81"><span class="toc-number">1.4.3.1.</span> <span class="toc-text">获取锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%87%8A%E6%94%BE%E9%94%81"><span class="toc-number">1.4.3.2.</span> <span class="toc-text">释放锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%97%AE%E9%A2%98"><span class="toc-number">1.4.3.3.</span> <span class="toc-text">问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E9%94%81-1"><span class="toc-number">1.4.3.4.</span> <span class="toc-text">获取锁</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E8%AF%AF%E5%88%A0%E9%97%AE%E9%A2%98"><span class="toc-number">1.4.4.</span> <span class="toc-text">分布式锁误删问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">解决方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%94%B9%E8%BF%9BRedis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="toc-number">1.4.4.2.</span> <span class="toc-text">改进Redis分布式锁</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98"><span class="toc-number">1.4.5.</span> <span class="toc-text">分布式锁的原子性问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis%E7%9A%84Lua%E7%9A%84%E8%84%9A%E6%9C%AC"><span class="toc-number">1.4.6.</span> <span class="toc-text">Redis的Lua的脚本</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="toc-number">1.4.6.1.</span> <span class="toc-text">基本语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E8%84%9A%E6%9C%AC"><span class="toc-number">1.4.6.2.</span> <span class="toc-text">执行脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8ELua%E8%84%9A%E6%9C%AC%E7%9A%84%E9%87%8A%E6%94%BE%E9%94%81"><span class="toc-number">1.4.6.3.</span> <span class="toc-text">基于Lua脚本的释放锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Java%E8%B0%83%E7%94%A8lua%E8%84%9A%E6%9C%AC%E6%94%B9%E9%80%A0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="toc-number">1.4.6.4.</span> <span class="toc-text">Java调用lua脚本改造分布式锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-3"><span class="toc-number">1.4.6.5.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8ERedission%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E4%BC%98%E5%8C%96"><span class="toc-number">1.4.7.</span> <span class="toc-text">基于Redission的分布式锁优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redission"><span class="toc-number">1.4.8.</span> <span class="toc-text">Redission</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="toc-number">1.4.8.1.</span> <span class="toc-text">使用方法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BC%95%E5%85%A5%E4%BE%9D%E8%B5%96"><span class="toc-number">1.4.8.1.1.</span> <span class="toc-text">引入依赖</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="toc-number">1.4.8.1.2.</span> <span class="toc-text">配置客户端</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="toc-number">1.4.8.1.3.</span> <span class="toc-text">使用分布式锁</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redisson%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81%E5%8E%9F%E7%90%86"><span class="toc-number">1.4.9.</span> <span class="toc-text">Redisson可重入锁原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81%E7%9A%84Lua%E8%84%9A%E6%9C%AC"><span class="toc-number">1.4.9.1.</span> <span class="toc-text">获取可重入锁的Lua脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%87%8A%E6%94%BE%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81%E7%9A%84Lua%E8%84%9A%E6%9C%AC"><span class="toc-number">1.4.9.2.</span> <span class="toc-text">释放可重入锁的Lua脚本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-4"><span class="toc-number">1.4.9.3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%8E%9F%E7%90%86"><span class="toc-number">1.4.9.4.</span> <span class="toc-text">Redis分布式锁原理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redisson%E7%9A%84multiLock%E5%8E%9F%E7%90%86"><span class="toc-number">1.4.10.</span> <span class="toc-text">Redisson的multiLock原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Redisson%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E4%B8%BB%E4%BB%8E%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98"><span class="toc-number">1.4.10.1.</span> <span class="toc-text">Redisson分布式锁的主从一致性问题</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-5"><span class="toc-number">1.4.11.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A7%92%E6%9D%80%E4%BC%98%E5%8C%96"><span class="toc-number">1.5.</span> <span class="toc-text">秒杀优化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%82%E6%AD%A5%E7%A7%92%E6%9D%80%E6%80%9D%E8%B7%AF"><span class="toc-number">1.5.1.</span> <span class="toc-text">异步秒杀思路</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B9%B6%E8%A1%8C"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">并行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-6"><span class="toc-number">1.5.1.2.</span> <span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%A7%92%E6%9D%80%E4%B8%9A%E5%8A%A1%E7%9A%84%E4%BC%98%E5%8C%96%E6%80%9D%E8%B7%AF"><span class="toc-number">1.5.1.2.1.</span> <span class="toc-text">秒杀业务的优化思路</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97%E7%9A%84%E5%BC%82%E6%AD%A5%E7%A7%92%E6%9D%80%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.5.1.2.2.</span> <span class="toc-text">基于阻塞队列的异步秒杀的问题</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="toc-number">1.6.</span> <span class="toc-text">Redis消息队列</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="toc-number">1.6.1.</span> <span class="toc-text">消息队列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EList%E6%A8%A1%E6%8B%9F%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="toc-number">1.6.2.</span> <span class="toc-text">基于List模拟消息队列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EPubSub%E7%9A%84%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="toc-number">1.6.3.</span> <span class="toc-text">基于PubSub的消息队列</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-7"><span class="toc-number">1.6.3.1.</span> <span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BC%98%E7%82%B9"><span class="toc-number">1.6.3.1.1.</span> <span class="toc-text">优点</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9"><span class="toc-number">1.6.3.1.2.</span> <span class="toc-text">缺点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Stream%E7%9A%84%E5%8D%95%E6%B6%88%E8%B4%B9%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.6.4.</span> <span class="toc-text">Stream的单消费模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EStream%E5%8F%91%E9%80%81%E6%B6%88%E6%81%AF"><span class="toc-number">1.6.4.1.</span> <span class="toc-text">基于Stream发送消息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EStream%E8%AF%BB%E5%8F%96%E6%B6%88%E6%81%AF"><span class="toc-number">1.6.4.2.</span> <span class="toc-text">基于Stream读取消息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-8"><span class="toc-number">1.6.4.3.</span> <span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BC%98%E7%82%B9%EF%BC%9A"><span class="toc-number">1.6.4.3.1.</span> <span class="toc-text">优点：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EStream%E7%9A%84%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97-%E6%B6%88%E8%B4%B9%E8%80%85%E7%BB%84"><span class="toc-number">1.6.5.</span> <span class="toc-text">基于Stream的消息队列-消费者组</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8EStream%E7%9A%84%E6%B6%88%E8%B4%B9%E9%98%9F%E5%88%97%E5%AE%9E%E7%8E%B0%E5%BC%82%E6%AD%A5%E7%A7%92%E6%9D%80"><span class="toc-number">1.6.6.</span> <span class="toc-text">基于Stream的消费队列实现异步秒杀</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%BE%E4%BA%BA%E7%82%B9%E8%AF%84"><span class="toc-number">1.7.</span> <span class="toc-text">达人点评</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%91%E5%B8%83%E7%82%B9%E8%AF%84%E7%AC%94%E8%AE%B0"><span class="toc-number">1.7.1.</span> <span class="toc-text">发布点评笔记</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%82%B9%E8%B5%9E"><span class="toc-number">1.7.2.</span> <span class="toc-text">点赞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%82%B9%E8%B5%9E%E6%8E%92%E8%A1%8C%E6%A6%9C"><span class="toc-number">1.7.3.</span> <span class="toc-text">点赞排行榜</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A5%BD%E5%8F%8B%E5%85%B3%E6%B3%A8"><span class="toc-number">1.8.</span> <span class="toc-text">好友关注</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E6%B3%A8%E5%92%8C%E5%8F%96%E5%85%B3"><span class="toc-number">1.8.1.</span> <span class="toc-text">关注和取关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B1%E5%90%8C%E5%85%B3%E6%B3%A8"><span class="toc-number">1.8.2.</span> <span class="toc-text">共同关注</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%B3%E6%B3%A8%E5%92%8C%E6%8E%A8%E9%80%81"><span class="toc-number">1.8.3.</span> <span class="toc-text">关注和推送</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8B%89%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.8.3.1.</span> <span class="toc-text">拉模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A8%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.8.3.2.</span> <span class="toc-text">推模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A8%E6%8B%89%E7%BB%93%E5%90%88"><span class="toc-number">1.8.3.3.</span> <span class="toc-text">推拉结合</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A8%E6%A8%A1%E5%BC%8F%E5%AE%9E%E7%8E%B0%E7%B2%89%E4%B8%9D%E6%8E%A8%E8%8D%90"><span class="toc-number">1.8.3.4.</span> <span class="toc-text">推模式实现粉丝推荐</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E5%85%B3%E6%B3%A8%E6%8E%A8%E9%80%81%E9%A1%B5%E9%9D%A2%E7%9A%84%E6%BB%9A%E5%8A%A8%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2"><span class="toc-number">1.8.3.5.</span> <span class="toc-text">实现关注推送页面的滚动分页查询</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%8C%89%E8%84%9A%E6%A0%87%EF%BC%88%E6%8E%92%E5%90%8D%EF%BC%89%E6%9F%A5%E8%AF%A2"><span class="toc-number">1.8.3.5.1.</span> <span class="toc-text">按脚标（排名）查询</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%99%84%E8%BF%91%E5%BA%97%E9%93%BA"><span class="toc-number">1.9.</span> <span class="toc-text">附近店铺</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E5%91%BD%E4%BB%A4"><span class="toc-number">1.9.1.</span> <span class="toc-text">常见命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E5%9C%B0%E7%90%86%E6%95%B0%E6%8D%AE"><span class="toc-number">1.9.1.1.</span> <span class="toc-text">添加地理数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%A1%E7%AE%97%E5%9C%B0%E7%90%86%E8%B7%9D%E7%A6%BB"><span class="toc-number">1.9.1.2.</span> <span class="toc-text">计算地理距离</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%90%9C%E7%B4%A2%E9%99%84%E8%BF%91%E5%9C%B0%E7%90%86"><span class="toc-number">1.9.1.3.</span> <span class="toc-text">搜索附近地理</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E8%BF%91%E5%95%86%E9%93%BA%E6%90%9C%E7%B4%A2"><span class="toc-number">1.9.2.</span> <span class="toc-text">附近商铺搜索</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E7%AD%BE%E5%88%B0"><span class="toc-number">1.10.</span> <span class="toc-text">用户签到</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E7%AD%BE%E5%88%B0%E5%8A%9F%E8%83%BD"><span class="toc-number">1.10.1.</span> <span class="toc-text">实现签到功能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%9F%E8%AE%A1%E7%AD%BE%E5%88%B0"><span class="toc-number">1.10.2.</span> <span class="toc-text">统计签到</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#UV%E7%BB%9F%E8%AE%A1"><span class="toc-number">1.11.</span> <span class="toc-text">UV统计</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#HyperLogLog%E7%94%A8%E6%B3%95"><span class="toc-number">1.11.1.</span> <span class="toc-text">HyperLogLog用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0UV%E7%BB%9F%E8%AE%A1"><span class="toc-number">1.11.2.</span> <span class="toc-text">实现UV统计</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEUV%E7%BB%9F%E8%AE%A1%E6%8B%A6%E6%88%AA%E5%99%A8"><span class="toc-number">1.11.2.1.</span> <span class="toc-text">配置UV统计拦截器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B7%BB%E5%8A%A0%E6%8B%A6%E6%88%AA%E5%99%A8"><span class="toc-number">1.11.2.2.</span> <span class="toc-text">添加拦截器</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/12/01/Redis%E5%AE%9E%E6%88%98/" title="Redis实战"><img src="/img/default-cover/45.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Redis实战"/></a><div class="content"><a class="title" href="/2022/12/01/Redis%E5%AE%9E%E6%88%98/" title="Redis实战">Redis实战</a><time datetime="2022-12-01T00:31:22.000Z" title="Created 2022-12-01 08:31:22">2022-12-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/11/06/ElasticSearch/" title="分布式搜索-ElasticSearch"><img src="/img/default-cover/12.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="分布式搜索-ElasticSearch"/></a><div class="content"><a class="title" href="/2022/11/06/ElasticSearch/" title="分布式搜索-ElasticSearch">分布式搜索-ElasticSearch</a><time datetime="2022-11-06T14:30:55.000Z" title="Created 2022-11-06 22:30:55">2022-11-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/11/01/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MQ/" title="消息队列 MQ"><img src="/img/default-cover/58.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="消息队列 MQ"/></a><div class="content"><a class="title" href="/2022/11/01/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MQ/" title="消息队列 MQ">消息队列 MQ</a><time datetime="2022-11-01T14:25:22.000Z" title="Created 2022-11-01 22:25:22">2022-11-01</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/07/31/Jenkins/" title="Jenkins"><img src="/img/default-cover/34.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins"/></a><div class="content"><a class="title" href="/2022/07/31/Jenkins/" title="Jenkins">Jenkins</a><time datetime="2022-07-31T14:30:55.000Z" title="Created 2022-07-31 22:30:55">2022-07-31</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/07/24/Spring%20Cloud%20Alibaba%EF%BC%88%E4%B8%89%EF%BC%89Seata/" title="Spring Cloud Alibaba（三） Seata"><img src="/img/default-cover/37.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring Cloud Alibaba（三） Seata"/></a><div class="content"><a class="title" href="/2022/07/24/Spring%20Cloud%20Alibaba%EF%BC%88%E4%B8%89%EF%BC%89Seata/" title="Spring Cloud Alibaba（三） Seata">Spring Cloud Alibaba（三） Seata</a><time datetime="2022-07-24T12:35:22.000Z" title="Created 2022-07-24 20:35:22">2022-07-24</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By YuanJW</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
