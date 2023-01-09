@@ -214,13 +214,6 @@
   </url>
   
   <url>
-    <loc>http://example.com/tags/ElasticSearch/</loc>
-    <lastmod>2023-01-09</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://example.com/tags/Others/</loc>
     <lastmod>2023-01-09</lastmod>
     <changefreq>weekly</changefreq>
@@ -228,7 +221,21 @@
   </url>
   
   <url>
+    <loc>http://example.com/tags/ElasticSearch/</loc>
+    <lastmod>2023-01-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://example.com/tags/Jenkins/</loc>
+    <lastmod>2023-01-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/tags/Spring-Cloud-Alibaba/</loc>
     <lastmod>2023-01-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -243,13 +250,6 @@
   
   <url>
     <loc>http://example.com/tags/MyBatis-Plus/</loc>
-    <lastmod>2023-01-09</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://example.com/tags/Spring-Cloud-Alibaba/</loc>
     <lastmod>2023-01-09</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
