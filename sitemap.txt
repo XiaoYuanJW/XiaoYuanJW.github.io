@@ -28,8 +28,8 @@ http://example.com/tags/Others/
 http://example.com/tags/ElasticSearch/
 http://example.com/tags/Jenkins/
 http://example.com/tags/MyBatis-Plus/
-http://example.com/tags/Spring-Cloud-Alibaba/
 http://example.com/tags/MySQL/
 http://example.com/tags/Redis/
+http://example.com/tags/Spring-Cloud-Alibaba/
 http://example.com/tags/SpringCloud/
 http://example.com/tags/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/

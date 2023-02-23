@@ -260,13 +260,6 @@
   </url>
   
   <url>
-    <loc>http://example.com/tags/Spring-Cloud-Alibaba/</loc>
-    <lastmod>2023-02-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://example.com/tags/MySQL/</loc>
     <lastmod>2023-02-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -275,6 +268,13 @@
   
   <url>
     <loc>http://example.com/tags/Redis/</loc>
+    <lastmod>2023-02-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/tags/Spring-Cloud-Alibaba/</loc>
     <lastmod>2023-02-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
