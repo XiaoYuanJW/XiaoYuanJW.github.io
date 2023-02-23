@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://example.com/2023/02/23/SpringCloud/</loc>
+    <loc>http://example.com/2023/01/12/MySQL%E8%BF%9B%E9%98%B6/</loc>
     
     <lastmod>2023-02-23</lastmod>
     
@@ -11,9 +11,9 @@
   </url>
   
   <url>
-    <loc>http://example.com/2023/01/18/MySQL%E8%BF%9B%E9%98%B6/</loc>
+    <loc>http://example.com/2023/01/23/SpringCloud/</loc>
     
-    <lastmod>2023-02-07</lastmod>
+    <lastmod>2023-02-23</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -225,14 +225,14 @@
   </url>
   
   <url>
-    <loc>http://example.com/tags/Others/</loc>
+    <loc>http://example.com/tags/Docker/</loc>
     <lastmod>2023-02-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://example.com/tags/Docker/</loc>
+    <loc>http://example.com/tags/Others/</loc>
     <lastmod>2023-02-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -260,6 +260,20 @@
   </url>
   
   <url>
+    <loc>http://example.com/tags/Spring-Cloud-Alibaba/</loc>
+    <lastmod>2023-02-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://example.com/tags/MySQL/</loc>
+    <lastmod>2023-02-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://example.com/tags/Redis/</loc>
     <lastmod>2023-02-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -267,7 +281,7 @@
   </url>
   
   <url>
-    <loc>http://example.com/tags/Spring-Cloud-Alibaba/</loc>
+    <loc>http://example.com/tags/SpringCloud/</loc>
     <lastmod>2023-02-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
