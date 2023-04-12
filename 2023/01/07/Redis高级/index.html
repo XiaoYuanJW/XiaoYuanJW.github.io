@@ -1,0 +1,436 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Hexo | Hexo</title><meta name="keywords" content="Redis"><meta name="author" content="YuanJW"><meta name="copyright" content="YuanJW"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Redis分布式缓存Redis集群单节点Redis问题 数据丢失问题：redis是内存存储，服务重启可能会导致数据丢失 并发能力问题：redis本身具有较强的并发能力，但是无法满足高并发的场景 故障恢复问题：Redis宕机会导致服务不可用，需要一种自动故障恢复的方法 存储能力问题：Redis单节点存储数据量难以满足海量数据需求   Redis持久化RDB持久化 RDB(Redis Database">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2023/01/07/Redis%E9%AB%98%E7%BA%A7/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Redis分布式缓存Redis集群单节点Redis问题 数据丢失问题：redis是内存存储，服务重启可能会导致数据丢失 并发能力问题：redis本身具有较强的并发能力，但是无法满足高并发的场景 故障恢复问题：Redis宕机会导致服务不可用，需要一种自动故障恢复的方法 存储能力问题：Redis单节点存储数据量难以满足海量数据需求   Redis持久化RDB持久化 RDB(Redis Database">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/img/default-cover/36.png">
+<meta property="article:published_time" content="2023-01-07T00:31:22.000Z">
+<meta property="article:modified_time" content="2023-01-18T17:45:50.000Z">
+<meta property="article:author" content="YuanJW">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/default-cover/36.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/01/07/Redis%E9%AB%98%E7%BA%A7/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Hexo',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-01-19 01:45:50'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">26</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">11</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default-cover/36.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Hexo</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">No title</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-01-07T00:31:22.000Z" title="Created 2023-01-07 08:31:22">2023-01-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-01-18T17:45:50.000Z" title="Updated 2023-01-19 01:45:50">2023-01-19</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Redis分布式缓存"><a href="#Redis分布式缓存" class="headerlink" title="Redis分布式缓存"></a>Redis分布式缓存</h1><h2 id="Redis集群"><a href="#Redis集群" class="headerlink" title="Redis集群"></a>Redis集群</h2><h3 id="单节点Redis问题"><a href="#单节点Redis问题" class="headerlink" title="单节点Redis问题"></a>单节点Redis问题</h3><ul>
+<li>数据丢失问题：redis是内存存储，服务重启可能会导致数据丢失</li>
+<li>并发能力问题：redis本身具有较强的并发能力，但是无法满足高并发的场景</li>
+<li>故障恢复问题：Redis宕机会导致服务不可用，需要一种自动故障恢复的方法</li>
+<li>存储能力问题：Redis单节点存储数据量难以满足海量数据需求</li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/08/NbxMuFW7miGhljw.png" alt="image-20230108005158866"></p>
+<h2 id="Redis持久化"><a href="#Redis持久化" class="headerlink" title="Redis持久化"></a>Redis持久化</h2><h3 id="RDB持久化"><a href="#RDB持久化" class="headerlink" title="RDB持久化"></a>RDB持久化</h3><blockquote>
+<p>RDB(Redis Database Backup file-Redis数据备份文件，也称Redis数据快照）指将内存中的所有数据记录到磁盘中。当Redis实例故障重启时，从磁盘读取快照文件，恢复数据。</p>
+<p>快照文件称为RDB文件，默认保存在当前运行目录中。Redis停机时会执行一次RDB。</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/08/mOUS3QZ6RBh2pIv.png" alt="image-20230108010846854"></p>
+<h4 id="RDB文件"><a href="#RDB文件" class="headerlink" title="RDB文件"></a>RDB文件</h4><blockquote>
+<p>关闭服务之前，进行一次RDB文件的保存</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/08/SQ5usAFn6W71tkX.png" alt="image-20230108191819684"></p>
+<blockquote>
+<p>查看挂载目录下的RDB文件</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/08/fXkqKOFlCJbSY5H.png" alt="image-20230108192014178"></p>
+<h4 id="Redis配置RDB"><a href="#Redis配置RDB" class="headerlink" title="Redis配置RDB"></a>Redis配置RDB</h4><blockquote>
+<p>Redis内部存在触发RDB的机制，可以在配置文件redis.conf文件中进行配置。</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/08/AEITQclVNFZytHw.png" alt="image-20230108011229515"></p>
+<p><img src="https://s2.loli.net/2023/01/09/vys9aCNJUFEMzHq.png" alt="image-20230109001222260"></p>
+<p><img src="https://s2.loli.net/2023/01/09/gcCBXoRNbQKUVmw.png" alt="image-20230109001325781"></p>
+<p><img src="https://s2.loli.net/2023/01/09/eQcbJrVGgn5oXy3.png" alt="image-20230109001523581"></p>
+<h4 id="Redis的Fork原理"><a href="#Redis的Fork原理" class="headerlink" title="Redis的Fork原理"></a>Redis的Fork原理</h4><blockquote>
+<p>bgsave开始时会fork主进程得到子进程，子进程共享主进程的内存数据。异步完成fork后读取内存数据并写入RDB文件中。</p>
+</blockquote>
+<p>在linux系统中，所有的进程都没有办法直接操作物理内存，操作系统会分配虚拟内存，而主进程只能操作虚拟内存，操作系统会维护一个虚拟内存与物理内存之间的映射关系表（称为页表），bgsave进行fork子进程时，只将页表进行复制。</p>
+<p><img src="https://s2.loli.net/2023/01/09/RSuqtB8WZTV5o4U.png" alt="image-20230109002527682"></p>
+<p>为了防止同时读写带来的脏数据，fork采用copy-on-write技术</p>
+<ul>
+<li><p>当主进程执行读操作时，访问只读的共享内存空间</p>
+</li>
+<li><p>当主进程执行写操作时，会拷贝一份数据副本，进行读写操作</p>
+</li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/09/JZeBbPFMdaUg1VI.png" alt="image-20230109002542007"></p>
+<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><h5 id="RDB的bgsave的基本流程"><a href="#RDB的bgsave的基本流程" class="headerlink" title="RDB的bgsave的基本流程"></a>RDB的bgsave的基本流程</h5><ul>
+<li>fork主进程得到一个子进程，共享内存空间</li>
+<li>子进程读取内存数据并写入新的RDB文件</li>
+<li>用新RDB文件替换旧的RDB文件</li>
+</ul>
+<h5 id="RDB会执行时间，save命令的含义"><a href="#RDB会执行时间，save命令的含义" class="headerlink" title="RDB会执行时间，save命令的含义"></a>RDB会执行时间，save命令的含义</h5><ul>
+<li>默认是服务停止时执行</li>
+<li>save 60 1000代表60秒内至少执行1000次修改则触发RDB</li>
+</ul>
+<h5 id="RDB的缺点"><a href="#RDB的缺点" class="headerlink" title="RDB的缺点"></a>RDB的缺点</h5><ul>
+<li>RDB执行时间间隔较长，两次RDB之间写入数据存在丢失的风险</li>
+<li>Fork子进程、压缩、创建RDB文件都是比较耗时</li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/09/spgCMDueazmk6Hx.png" alt="image-20230109003106114"></p>
+<h3 id="AOF持久化"><a href="#AOF持久化" class="headerlink" title="AOF持久化"></a>AOF持久化</h3><h4 id="AOF定义"><a href="#AOF定义" class="headerlink" title="AOF定义"></a>AOF定义</h4><blockquote>
+<p>AOF(Append Only File)是追加文件，Redis处理的每一个写命令都会记录到在AOF文件，可以看作是命令日志文件。</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/10/TlOpdCLcWEVrsSb.png" alt="image-20230110090633806"></p>
+<h4 id="AOF开启配置"><a href="#AOF开启配置" class="headerlink" title="AOF开启配置"></a>AOF开启配置</h4><blockquote>
+<p>AOF默认是关闭状态，在配置文件redis.conf中开启AOF</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#  开启AOF功能，默认是关闭状态</span><br><span class="line">appendonly yes</span><br><span class="line"># AOF文件名称</span><br><span class="line">appendfilename &quot;appendonly.aof&quot;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>通过redis.conf文件来配置AOF命令记录的频率</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 表示每次执行一次写命令，立即记录到AOF文件中</span><br><span class="line">appendfsync always</span><br><span class="line"># 写命令执行完后先放入AOF缓冲区，表示每隔一秒将缓冲区的数据写到AOF文件（默认方案）</span><br><span class="line">appendfsync everysec</span><br><span class="line"># 写命令执行完先放入AOF缓冲区，由操作系统决定何时将缓存区内容写到AOF文件</span><br><span class="line">appendfsync no</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/01/10/unMgHpOR2seiJrm.png" alt="image-20230110091731459"></p>
+<table>
+<thead>
+<tr>
+<th>appendfsync配置项</th>
+<th>刷盘时机</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>always</td>
+<td>同步刷盘</td>
+<td>可靠性高，数据几乎不会丢失</td>
+<td>性能影响大</td>
+</tr>
+<tr>
+<td>everysec</td>
+<td>每秒刷盘</td>
+<td>性能适中</td>
+<td>可能会丢失1秒的数据</td>
+</tr>
+<tr>
+<td>no</td>
+<td>操作系统控制</td>
+<td>性能最好</td>
+<td>可靠性比较差，可能会丢失大量数据</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>关闭redis，会有一次AOF文件的同步</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/10/p5Mh7eb24gajlZz.png" alt="image-20230110093258645"></p>
+<blockquote>
+<p>redis会从AOF文件中进行一次数据加载 </p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/10/ZLxgjaHBwXMhsmb.png" alt="image-20230110093514995"></p>
+<blockquote>
+<p>由于AOF是记录命令，AOF文件会比RBD文件大，而且AOF会记录同一个key的多次写操作，只有最后一次写操作命令才有意义。</p>
+<p>通过<code>brewriteaof</code>命令可以后台开启独立线程异步让AOF文件执行重写功能，用最少的命令达到相同的效果</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/10/zU7gsFxH6f3W1hO.png" alt="image-20230110094021351"></p>
+<p><img src="https://s2.loli.net/2023/01/10/Wc7FJIZoNiKtOg4.png" alt="image-20230110094001829"></p>
+<blockquote>
+<p>Redis会在触发阈值时自动重写AOF文件，阈值可以在配置文件redis.conf中进行配置</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># AOF文件与上一次重写后文件增加超过百分比触发重写</span><br><span class="line">auto-aof-rewrite-percentage 100</span><br><span class="line"># AOF文件体积最小多大以上触发重写</span><br><span class="line">auto-aof-rewrite-min-size 64mb</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/01/10/N4dEl1WzYbhC9ny.png" alt="image-20230110095108606"></p>
+<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><p><img src="https://s2.loli.net/2023/01/10/zrQDhE2I8Jsx4oi.png" alt="image-20230110095557170"></p>
+<h2 id="Redis主从"><a href="#Redis主从" class="headerlink" title="Redis主从"></a>Redis主从</h2><h3 id="搭建主从架构"><a href="#搭建主从架构" class="headerlink" title="搭建主从架构"></a>搭建主从架构</h3><blockquote>
+<p>单节点redis的并发能力是存在上限的，要提高redis的并发能力，需要搭建主从集群，实现读写分离</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/10/QwMr75DPoIi3uTk.png" alt="image-20230110100433494"></p>
+<h4 id="搭建redis从节点"><a href="#搭建redis从节点" class="headerlink" title="搭建redis从节点"></a>搭建redis从节点</h4><blockquote>
+<p>使用docker搭建从节点，端口分别是6378和6377</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">version: &#x27;3.1&#x27;</span><br><span class="line">services:</span><br><span class="line">  master:</span><br><span class="line">    environment: </span><br><span class="line">      - TZ=Asia/Shanghai</span><br><span class="line">    image: redis</span><br><span class="line">    container_name: redis-master</span><br><span class="line">    command: redis-server --replica-announce-ip 1.117.34.49 --replica-announce-port 6376 --requirepass 123456 --masterauth 123456 --appendonly yes</span><br><span class="line">    ports:</span><br><span class="line">      - 6376:6379</span><br><span class="line">    volumes:</span><br><span class="line">      - /mydata/redis-cluster/redis-master:/data  </span><br><span class="line">  slave1:</span><br><span class="line">    environment: </span><br><span class="line">      - TZ=Asia/Shanghai</span><br><span class="line">    image: redis</span><br><span class="line">    container_name: redis-slave1</span><br><span class="line">    command: redis-server --slaveof 1.117.34.49 6379 --requirepass 123456 --replica-announce-ip 1.117.34.49 --replica-announce-port 6377 --masterauth 123456 --appendonly yes</span><br><span class="line">    ports:</span><br><span class="line">      - 6377:6379</span><br><span class="line">    volumes:</span><br><span class="line">      - /mydata/redis-cluster/redis-slave1:/data  </span><br><span class="line">  slave2:</span><br><span class="line">    environment: </span><br><span class="line">      - TZ=Asia/Shanghai</span><br><span class="line">    image: redis</span><br><span class="line">    container_name: redis-slave2</span><br><span class="line">    command: redis-server --slaveof 1.117.34.49 6379 --requirepass 123456 --replica-announce-ip 1.117.34.49 --replica-announce-port 6378 --masterauth 123456 --appendonly yes</span><br><span class="line">    ports:</span><br><span class="line">      - 6378:6379</span><br><span class="line">    volumes:</span><br><span class="line">      - /mydata/redis-cluster/redis-salve2:/data  </span><br></pre></td></tr></table></figure>
+
+<h4 id="开启主从关系的两种方式"><a href="#开启主从关系的两种方式" class="headerlink" title="开启主从关系的两种方式"></a>开启主从关系的两种方式</h4><ul>
+<li><p>修改配置文件（永久生效）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在配置文件redis.conf中添加配置</span></span><br><span class="line">slaveof &lt;masterip&gt; &lt;masterport&gt;</span><br></pre></td></tr></table></figure></li>
+<li><p>使用redis-cli客户端，执行slaveof命令（重启失效）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在redis5.0之前的版本执行slaveof命令</span></span><br><span class="line">slaveof &lt;masterip&gt; &lt;masterport&gt;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">在redis5.0之后的版本执行replicaof命令</span></span><br><span class="line">replicaof &lt;masterip&gt; &lt;masterport&gt;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>由于在docker容器内部进行操作，即使在一台主机上，也不能使用localhost代替masterip</p>
+</blockquote>
+</li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/10/1zKRjfayu53QDVH.png" alt="image-20230110121320282"></p>
+<blockquote>
+<p>进入主节点，查看主从关系</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INFO REPLICATION</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/01/10/rACHbGqamTYU89k.png" alt="image-20230110123157694"></p>
+<blockquote>
+<p>在主节点存储数据，在从节点可以查询</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/10/uwHLjqyR7fSWmTI.png" alt="image-20230110123641859"></p>
+<p><img src="https://s2.loli.net/2023/01/10/yz9YN46jVRQHnEg.png" alt="image-20230110123707448"></p>
+<h4 id="总计"><a href="#总计" class="headerlink" title="总计"></a>总计</h4><p><img src="https://s2.loli.net/2023/01/10/RPfxXKOY9SyknhU.png" alt="image-20230110104432429"></p>
+<h3 id="主从复制原理"><a href="#主从复制原理" class="headerlink" title="主从复制原理"></a>主从复制原理</h3><blockquote>
+<p>在2.8版本之前只有全量复制，在2.8版本之后有全量复制和增量复制</p>
+</blockquote>
+<ul>
+<li><code>全量（同步）复制</code>：第一次同步</li>
+<li><code>增量（同步）复制</code>：会将主从库网络断连期间主库收到的命令，同步给从库</li>
+</ul>
+<h4 id="全量同步"><a href="#全量同步" class="headerlink" title="全量同步"></a><code>全量同步</code></h4><blockquote>
+<p>当启动多个Redis实例时，它们之间就可以通过<code>replicaof</code>命令（或者<code>slaveof</code>命令）形成主库和从库的关系，之后会按照三个阶段完成数据的第一次同步</p>
+</blockquote>
+<p><img src="https://pdai.tech/images/db/redis/db-redis-copy-2.jpg" alt="img"></p>
+<blockquote>
+<p>第一阶段：主从库建立连接时，从库发送主库一个psync命令请求数据同步，主库根据这个命令的参数启动辅助，psync命令包括对应replid和偏移量offset两个参数，当replid与主库的replid不一致时，主库会使用全量复制并发送FULLRESYNC响应命令并带上两个参数：replid和offset（偏移量用于记录复制进度）</p>
+<p>第二阶段：主库执行bgsave命令，依赖内存快照生成RDB文件并将文件发送到从库，从库接收到RDB文件后，会先清空本地当前数据，加载RDB文件。在主库将文件发送往从库的过程，这个过程时比较耗时的且有可能受网络波动的影响，但主库并不会被阻塞，正常接收请求，为了保证数据一致性，主库会将RDB文件生成后的所有写命令记录到内存中专门的repl_baklog中</p>
+<p>第三阶段：将第二阶段记录的repl_baklog中的写命令发送给从库，从库接收到的命令并执行，完成同步。</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/10/5JprACMySFftU9d.png"></p>
+<h5 id="从节点日志"><a href="#从节点日志" class="headerlink" title="从节点日志"></a><code>从节点日志</code></h5><p><img src="https://s2.loli.net/2023/01/10/JB1uWC2MS8AicN7.png" alt="image-20230110152016410"></p>
+<h5 id="主节点日志"><a href="#主节点日志" class="headerlink" title="主节点日志"></a><code>主节点日志</code></h5><p><img src="https://s2.loli.net/2023/01/10/YuMvB4sHoEQFrVp.png" alt="image-20230110152327231"></p>
+<h5 id="全量复制总结"><a href="#全量复制总结" class="headerlink" title="全量复制总结"></a>全量复制总结</h5><p><img src="https://s2.loli.net/2023/01/10/uDZJve4NWmIF1zC.png" alt="image-20230110151505640"></p>
+<h4 id="增量同步"><a href="#增量同步" class="headerlink" title="增量同步"></a><code>增量同步</code></h4><blockquote>
+<p>主从第一次同步是全量同步，如果从节点重启或者网络闪断后，则执行增量同步</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/10/FEGujqAaepXHTbK.jpg" alt="img"></p>
+<blockquote>
+<p>repl_baklog是环形缓冲区，存储大小存在上限，在从库重启或者网络闪断太久，从库会丢失掉那部分被新的写命令覆盖掉时，无法进行增量同步，从库和主库之间要进行全量复制。</p>
+<p>从库记录着自己的relid，每个从库的复制进度不一定相同，从库重连时，主库会根据从库各自的复制进度决定这个从库是进行增量重复还是全量重复。</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/10/c52RLAqBxmZQGKu.png"></p>
+<p><img src="https://s2.loli.net/2023/01/10/WAv3UOP86gnaJrG.png" alt="image-20230110172014196"></p>
+<h4 id="优化主从复制"><a href="#优化主从复制" class="headerlink" title="优化主从复制"></a>优化主从复制</h4><h5 id="优化全量同步性能："><a href="#优化全量同步性能：" class="headerlink" title="优化全量同步性能："></a><code>优化全量同步性能</code>：</h5><ul>
+<li><p>在master配置文件中配置repl-diskless-sync-yes启用无磁盘复制，不生成RDB文件直接发送数据给从节点，避免全量同步时的磁盘IO </p>
+</li>
+<li><p>减少Redis单节点上的内存占用，减少RDB导致过多的磁盘IO和网络IO</p>
+</li>
+</ul>
+<h5 id="尽量减少全量同步："><a href="#尽量减少全量同步：" class="headerlink" title="尽量减少全量同步："></a><code>尽量减少全量同步</code>：</h5><ul>
+<li>适当提高repl_baklog的大小，发现slave宕机或者网络闪断时，尽快实现故障恢复，尽可能避免全量同步</li>
+</ul>
+<h5 id="降低主节点同步压力"><a href="#降低主节点同步压力" class="headerlink" title="降低主节点同步压力"></a><code>降低主节点同步压力</code></h5><ul>
+<li>限制一个主节点上的从节点的数量，可以采用<code>主-从-从</code>的链式结构，减少master压力</li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/10/7ELpu5hyvUDiABN.png" alt="image-20230110174714704"></p>
+<h3 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h3><p><img src="https://s2.loli.net/2023/01/10/54UFzgfMbhIriVu.png" alt="image-20230110174830537"></p>
+<h2 id="Redis哨兵"><a href="#Redis哨兵" class="headerlink" title="Redis哨兵"></a>Redis哨兵</h2><blockquote>
+<p>slave节点宕机恢复后，可以找到master节点同步数据，但是当master节点发生宕机时，我们需要怎么解决</p>
+<p>在Redis主从集群中，哨兵机制是实现主从库自动切换的关键机制，它有效地解决主从复制模式下的故障转移问题</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/18/AwiCPLeYskamW74.png" alt="sentinel"></p>
+<h3 id="哨兵机制（Redis-Sentinel）的作用和原理"><a href="#哨兵机制（Redis-Sentinel）的作用和原理" class="headerlink" title="哨兵机制（Redis Sentinel）的作用和原理"></a>哨兵机制（Redis Sentinel）的作用和原理</h3><blockquote>
+<p>在Redis2.8版本开始引入Redis Sentinel（Redis哨兵），哨兵的核心功能是实现主从集群的自动故障转移。</p>
+</blockquote>
+<h4 id="哨兵的作用"><a href="#哨兵的作用" class="headerlink" title="哨兵的作用"></a>哨兵的作用</h4><ul>
+<li><code>监控</code>(monitoring)：哨兵不断检查master和slave是否按照预期工作</li>
+<li><code>自动故障恢复</code>(automatic failover)：如果master不能正常工作，sentinel会将失效master的一个slave升级为新的master并让其他从节点同步新的master，当故障实例恢复后，以新的master作为主节点</li>
+<li><code>配置提供者</code>（configuration provider）：在客户端进行初始化时，通过连接哨兵来获得当前redis集群服务的主节点地址</li>
+<li><code>通知</code>（notification）：当集群发生故障转移时，哨兵会将最新的变更信息发送给redis客户端</li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/10/EXiAUq6pVfjkvdO.png" alt="image-20230110235424893"></p>
+<h4 id="服务状态监控"><a href="#服务状态监控" class="headerlink" title="服务状态监控"></a>服务状态监控</h4><blockquote>
+<p>Sentinel基于心跳机制监测服务状态，每隔1秒向集群的每个实例发送ping命令</p>
+</blockquote>
+<ul>
+<li><code>主观下线</code>：如果某sentinel节点发现实例未在规定时间内响应，则认为该实例主观下线</li>
+<li><code>客观下线</code>：若超过指定数量（quorum：一般为sentinel实例数量的一半）的sentinel认为该实例主观下线，则该实例为客观下线</li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/10/LMBbWzFNqAV9Eid.png" alt="img"></p>
+<p><img src="https://s2.loli.net/2023/01/11/CTaXt3MeLJ4DO86.png" alt="image-20230111093909624"></p>
+<h4 id="哨兵集群的选举"><a href="#哨兵集群的选举" class="headerlink" title="哨兵集群的选举"></a>哨兵集群的选举</h4><blockquote>
+<p>为了安全性，一般哨兵会搭建分布式集群，作为分布式集群，必然涉及共识问题（即选举问题）</p>
+<p>哨兵的选举机制一般是一个简单的<code>Raft算法</code>：选举的票数大于等于num(sentinel)/2+1时，该选举者将成为新的主节点</p>
+</blockquote>
+<h4 id="新主库的选出"><a href="#新主库的选出" class="headerlink" title="新主库的选出"></a>新主库的选出</h4><blockquote>
+<p>master被判定客观下线，sentinel要从剩余的从库中选择一个新的master</p>
+</blockquote>
+<ul>
+<li>过滤掉不健康的（下线或断线），没有响应哨兵ping的slave</li>
+<li>过滤掉与master断开时间长短的slave，如果超过指定值（down-after-milliseconds*10），则会直接被排除</li>
+<li>选择slave节点中salve-priority值最小的即优先级最高的（在配置文件redis.conf中配置）</li>
+<li>选择复制偏移量最大即offset值最大的，越大说明数据越新，复制最完整的从节点</li>
+<li>选择slave节点的运行id较小的</li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/11/UCfjvlErT2Xi5eg.jpg" alt="img"></p>
+<h4 id="故障的转移"><a href="#故障的转移" class="headerlink" title="故障的转移"></a>故障的转移</h4><ul>
+<li>sentinel给选举出的slave节点发送<code>replicaof on one</code>命令，让其脱离从节点，升级为主节点</li>
+<li>将其他从节点发送slaveof命令，指向新的主节点，从新的master同步数据</li>
+<li>通知应用程序客户端RedisClient主节点的变更信息即新的主节点的地址</li>
+<li>修改原主节点即故障节点的配置文件，将其标记为slave，当故障节点恢复后会自动变成新主节点的从节点</li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/11/ceygupXdiRS1KvA.png" alt="img"></p>
+<h4 id="总结-3"><a href="#总结-3" class="headerlink" title="总结"></a>总结</h4><p><img src="https://s2.loli.net/2023/01/11/j7OHkP8ZvyfdAwl.png" alt="image-20230111103827196"></p>
+<h3 id="搭建哨兵集群"><a href="#搭建哨兵集群" class="headerlink" title="搭建哨兵集群"></a>搭建哨兵集群</h3><p><img src="https://s2.loli.net/2023/01/11/5l3JuFkQ7RvZdjN.png" alt="image-20230111103943735"></p>
+<h4 id="创建配置文件"><a href="#创建配置文件" class="headerlink" title="创建配置文件"></a>创建配置文件</h4><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">port</span> <span class="string">&lt;port&gt;</span>	<span class="comment"># 哨兵实例运行端口</span></span><br><span class="line"><span class="string">sentinel</span> <span class="string">announce-ip</span> <span class="string">&lt;ip&gt;</span>	<span class="comment"># 哨兵指定ip地址 </span></span><br><span class="line"><span class="string">sentinel</span> <span class="string">monitor</span> <span class="string">&lt;master_name&gt;</span> <span class="string">&lt;master_ip&gt;</span> <span class="string">&lt;master_port&gt;</span> <span class="string">&lt;quonum&gt;</span> <span class="comment"># 哨兵指定主节点自定义名称、ip、端口以及用于选举的quonum</span></span><br><span class="line"><span class="string">sentinel</span> <span class="string">down-after-milliseconds</span> <span class="string">&lt;master_name&gt;</span> <span class="number">5000</span> <span class="comment"># 主观判定不可达时间</span></span><br><span class="line"><span class="string">sentinel</span> <span class="string">failover-timeout</span> <span class="string">&lt;master_name&gt;</span> <span class="number">5000</span> <span class="comment"># 故障转移超时时间</span></span><br><span class="line"><span class="string">sentinel</span> <span class="string">auth-pass</span> <span class="string">&lt;master_name&gt;</span> <span class="string">&lt;master_password&gt;</span> <span class="comment"># 设置master与slave验证密码</span></span><br><span class="line"><span class="string">dir</span> <span class="string">/tmp</span> <span class="comment"># 工作目录</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/01/11/SgwAqWyi6fN7D8o.png" alt="image-20230111110631501"></p>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">port</span> <span class="number">27001</span></span><br><span class="line"><span class="string">protected-mode</span> <span class="literal">no</span></span><br><span class="line"><span class="string">sentinel</span> <span class="string">monitor</span> <span class="string">mymaster</span> <span class="number">1.117</span><span class="number">.34</span><span class="number">.49</span> <span class="number">6376 </span><span class="number">2</span></span><br><span class="line"><span class="string">sentinel</span> <span class="string">down-after-milliseconds</span> <span class="string">mymaster</span> <span class="number">5000</span></span><br><span class="line"><span class="string">sentinel</span> <span class="string">parallel-syncs</span> <span class="string">mymaster</span> <span class="number">1</span></span><br><span class="line"><span class="string">sentinel</span> <span class="string">failover-timeout</span> <span class="string">mymaster</span> <span class="number">18000</span></span><br><span class="line"><span class="string">sentinel</span> <span class="string">auth-pass</span> <span class="string">mymaster</span> <span class="number">123456</span></span><br><span class="line"><span class="string">dir</span> <span class="string">/tmp</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="编写Docker-compose-yml配置文件"><a href="#编写Docker-compose-yml配置文件" class="headerlink" title="编写Docker-compose.yml配置文件"></a>编写Docker-compose.yml配置文件</h4><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&#x27;3&#x27;</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">sentinel1:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">redis</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">sentinel1</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">27001</span><span class="string">:27001</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">redis-sentinel</span> <span class="string">/usr/local/etc/redis/sentinel.conf</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/mydata/sentinel/conf/sentinel1/:/usr/local/etc/redis/</span></span><br><span class="line">  <span class="attr">sentinel2:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">redis</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">sentinel2</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">27002</span><span class="string">:27002</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">redis-sentinel</span> <span class="string">/usr/local/etc/redis/sentinel.conf</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/mydata/sentinel/conf/sentinel2/:/usr/local/etc/redis/</span></span><br><span class="line">  <span class="attr">sentinel3:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">redis</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">sentinel3</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">27003</span><span class="string">:27003</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">redis-sentinel</span> <span class="string">/usr/local/etc/redis/sentinel.conf</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">/mydata/sentinel/conf/sentinel3/:/usr/local/etc/redis/</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h4><p><img src="https://s2.loli.net/2023/01/16/NTxzeSFrURqapDM.png" alt="image-20230116014331859"></p>
+<h4 id="运行服务"><a href="#运行服务" class="headerlink" title="运行服务"></a>运行服务</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /mydata/sentinel/</span><br><span class="line">docker-compose up -d</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/01/16/znLDU26ph8EXZrY.png"></p>
+<p><img src="https://s2.loli.net/2023/01/18/U98BmP4QbYrMFjc.png" alt="image-20230118171244229"></p>
+<h4 id="测试故障转移"><a href="#测试故障转移" class="headerlink" title="测试故障转移"></a>测试故障转移</h4><h5 id="关闭主节点"><a href="#关闭主节点" class="headerlink" title="关闭主节点"></a>关闭主节点</h5><p><img src="https://s2.loli.net/2023/01/16/1z3JrFyKgIOpAtm.png" alt="image-20230116231427217"></p>
+<h5 id="查看sentinel日志"><a href="#查看sentinel日志" class="headerlink" title="查看sentinel日志"></a>查看sentinel日志</h5><p><img src="https://s2.loli.net/2023/01/16/RCj95xe8zGABnqb.png" alt="image-20230116231417144"></p>
+<h5 id="查看转移的主节点"><a href="#查看转移的主节点" class="headerlink" title="查看转移的主节点"></a>查看转移的主节点</h5><p><img src="https://s2.loli.net/2023/01/16/CIVN1vlhLrxWXBo.png" alt="image-20230116231716032"></p>
+<h3 id="RedisTemplate哨兵模式"><a href="#RedisTemplate哨兵模式" class="headerlink" title="RedisTemplate哨兵模式"></a>RedisTemplate哨兵模式</h3><blockquote>
+<p>Sentinel集群监管下的Redis主从集群中，其主节点会由于自动故障转移而发生变化，Redis客户端必须感知变化并及时更新连接信息。Spring的<code>RedisTemplate</code>底层利用<code>lettuce</code>实现了节点感知和自动切换。</p>
+</blockquote>
+<h4 id="Spring配置哨兵模式"><a href="#Spring配置哨兵模式" class="headerlink" title="Spring配置哨兵模式"></a>Spring配置哨兵模式</h4><h5 id="引入redis的starter依赖"><a href="#引入redis的starter依赖" class="headerlink" title="引入redis的starter依赖"></a>引入redis的starter依赖</h5><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="配置文件指定sentinel信息"><a href="#配置文件指定sentinel信息" class="headerlink" title="配置文件指定sentinel信息"></a>配置文件指定sentinel信息</h5><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">logging:</span></span><br><span class="line"><span class="attr">level:</span></span><br><span class="line">  <span class="attr">io.lettuce.core:</span> <span class="string">debug</span></span><br><span class="line"></span><br><span class="line"><span class="attr">redis:</span></span><br><span class="line">  <span class="attr">password:</span> <span class="number">123456</span></span><br><span class="line">  <span class="attr">timeout:</span> <span class="string">10000ms</span></span><br><span class="line">  <span class="attr">lettuce:</span></span><br><span class="line">    <span class="attr">pool:</span></span><br><span class="line">      <span class="attr">max-active:</span> <span class="number">10</span> <span class="comment"># 连接池最大连接数</span></span><br><span class="line">      <span class="attr">max-idle:</span> <span class="number">8</span> <span class="comment"># 连接池最大空闲连接数</span></span><br><span class="line">      <span class="attr">min-idle:</span> <span class="number">2</span> <span class="comment"># 连接池最小空闲连接数</span></span><br><span class="line">      <span class="attr">max-wait:</span> <span class="string">-1ms</span> <span class="comment"># 连接池最大阻塞等待时间，负值表示没有限制</span></span><br><span class="line">  <span class="attr">sentinel:</span></span><br><span class="line">    <span class="attr">master:</span> <span class="string">mymaster</span> <span class="comment"># 指定主节点名称</span></span><br><span class="line">    <span class="attr">nodes:</span> <span class="comment"># 指定redis-sentinel集群信息</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">1.117</span><span class="number">.34</span><span class="number">.49</span><span class="string">:27001</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">1.117</span><span class="number">.34</span><span class="number">.49</span><span class="string">:27002</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">1.117</span><span class="number">.34</span><span class="number">.49</span><span class="string">:27003</span></span><br><span class="line">    <span class="attr">password:</span> <span class="number">123456</span> <span class="comment"># Redis服务器连接密码</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="配置主从读写分离"><a href="#配置主从读写分离" class="headerlink" title="配置主从读写分离"></a>配置主从读写分离</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="keyword">public</span> LettuceClientConfigurationBuilderCustomizer <span class="title function_">lettuceClientConfigurationBuilderCustomizer</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> clientConfigurationBuilder -&gt; clientConfigurationBuilder.readFrom(ReadFrom.REPLICA_PREFERRED);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ReadFrom是读取策略：</p>
+<ul>
+<li><code>MASTER</code>：从主节点读取</li>
+<li><code>MASTER_PREFERRED</code>：优先从主节点读取，主机点不可用才读取从节点</li>
+<li><code>REPLICA</code>：从从节点读取</li>
+<li><code>REPLICA_PREFERRED</code>：优先从从节点读取，所有的从节点不可用才读取主节点</li>
+</ul>
+<p><img src="https://s2.loli.net/2023/01/17/6Hcq9KVOjbSBuJy.png" alt="image-20230117000659492"></p>
+<h2 id="Redis分片集群"><a href="#Redis分片集群" class="headerlink" title="Redis分片集群"></a>Redis分片集群</h2><h3 id="分片集群"><a href="#分片集群" class="headerlink" title="分片集群"></a>分片集群</h3><blockquote>
+<p><code>主从集群</code>和<code>哨兵模式</code>解决了高可用，高读并发的问题，但是写能力和存储能力无法进行扩展：    </p>
+<ul>
+<li>海量数据存储问题</li>
+<li>高并发写问题</li>
+</ul>
+<p>主节点分片集群的可以存储海量数据，同时吸收高写并发能力：</p>
+<ul>
+<li>集群中有多个主节点，每个主节点存储不同的数据</li>
+<li>每个主节点分片可以有多个从节点</li>
+<li>主节点之间通过ping监控彼此健康状态，实现故障转移</li>
+<li>客户端请求可以访问集群中任意的节点并且被转发到正确的节点上</li>
+</ul>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/01/18/sADR2nWN8bTlUSt.png" alt="image-20230118232513698"></p>
+<h3 id="散列插槽"><a href="#散列插槽" class="headerlink" title="散列插槽"></a>散列插槽</h3><h3 id="集群伸缩"><a href="#集群伸缩" class="headerlink" title="集群伸缩"></a>集群伸缩</h3><h3 id="故障转移"><a href="#故障转移" class="headerlink" title="故障转移"></a>故障转移</h3><h3 id="RedisTemplate访问分片分配"><a href="#RedisTemplate访问分片分配" class="headerlink" title="RedisTemplate访问分片分配"></a>RedisTemplate访问分片分配</h3><h2 id="多级缓存"><a href="#多级缓存" class="headerlink" title="多级缓存"></a>多级缓存</h2><h2 id="Redis最佳实践"><a href="#Redis最佳实践" class="headerlink" title="Redis最佳实践"></a>Redis最佳实践</h2></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="http://example.com">YuanJW</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2023/01/07/Redis%E9%AB%98%E7%BA%A7/">http://example.com/2023/01/07/Redis%E9%AB%98%E7%BA%A7/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Redis/">Redis</a></div><div class="post_share"><div class="social-share" data-image="/img/default-cover/36.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/ShareJS/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/ShareJS/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/01/08/Docker%E5%B8%B8%E8%A7%81%E9%83%A8%E7%BD%B2%E6%80%BB%E7%BB%93/"><img class="prev-cover" src="/img/default-cover/52.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Docker在Linux环境下常见部署</div></div></a></div><div class="next-post pull-right"><a href="/2022/12/01/Redis%E5%AE%9E%E6%88%98/"><img class="next-cover" src="/img/default-cover/34.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Redis实战</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2022/12/01/Redis%E5%AE%9E%E6%88%98/" title="Redis实战"><img class="cover" src="/img/default-cover/34.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-12-01</div><div class="title">Redis实战</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YuanJW</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">26</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">11</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/XiaoYuanJW" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="/2754742370@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Redis%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98"><span class="toc-number">1.</span> <span class="toc-text">Redis分布式缓存</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E9%9B%86%E7%BE%A4"><span class="toc-number">1.1.</span> <span class="toc-text">Redis集群</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E8%8A%82%E7%82%B9Redis%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.1.</span> <span class="toc-text">单节点Redis问题</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%8C%81%E4%B9%85%E5%8C%96"><span class="toc-number">1.2.</span> <span class="toc-text">Redis持久化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#RDB%E6%8C%81%E4%B9%85%E5%8C%96"><span class="toc-number">1.2.1.</span> <span class="toc-text">RDB持久化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#RDB%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">RDB文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis%E9%85%8D%E7%BD%AERDB"><span class="toc-number">1.2.1.2.</span> <span class="toc-text">Redis配置RDB</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Redis%E7%9A%84Fork%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.1.3.</span> <span class="toc-text">Redis的Fork原理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.2.1.3.1.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#RDB%E7%9A%84bgsave%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="toc-number">1.2.1.3.2.</span> <span class="toc-text">RDB的bgsave的基本流程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#RDB%E4%BC%9A%E6%89%A7%E8%A1%8C%E6%97%B6%E9%97%B4%EF%BC%8Csave%E5%91%BD%E4%BB%A4%E7%9A%84%E5%90%AB%E4%B9%89"><span class="toc-number">1.2.1.3.3.</span> <span class="toc-text">RDB会执行时间，save命令的含义</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#RDB%E7%9A%84%E7%BC%BA%E7%82%B9"><span class="toc-number">1.2.1.3.4.</span> <span class="toc-text">RDB的缺点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AOF%E6%8C%81%E4%B9%85%E5%8C%96"><span class="toc-number">1.2.2.</span> <span class="toc-text">AOF持久化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#AOF%E5%AE%9A%E4%B9%89"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">AOF定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AOF%E5%BC%80%E5%90%AF%E9%85%8D%E7%BD%AE"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">AOF开启配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-number">1.2.3.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E4%B8%BB%E4%BB%8E"><span class="toc-number">1.3.</span> <span class="toc-text">Redis主从</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%AD%E5%BB%BA%E4%B8%BB%E4%BB%8E%E6%9E%B6%E6%9E%84"><span class="toc-number">1.3.1.</span> <span class="toc-text">搭建主从架构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%90%AD%E5%BB%BAredis%E4%BB%8E%E8%8A%82%E7%82%B9"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">搭建redis从节点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%90%AF%E4%B8%BB%E4%BB%8E%E5%85%B3%E7%B3%BB%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">开启主从关系的两种方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E8%AE%A1"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">总计</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86"><span class="toc-number">1.3.2.</span> <span class="toc-text">主从复制原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%A8%E9%87%8F%E5%90%8C%E6%AD%A5"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">全量同步</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%8E%E8%8A%82%E7%82%B9%E6%97%A5%E5%BF%97"><span class="toc-number">1.3.2.1.1.</span> <span class="toc-text">从节点日志</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%B8%BB%E8%8A%82%E7%82%B9%E6%97%A5%E5%BF%97"><span class="toc-number">1.3.2.1.2.</span> <span class="toc-text">主节点日志</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%A8%E9%87%8F%E5%A4%8D%E5%88%B6%E6%80%BB%E7%BB%93"><span class="toc-number">1.3.2.1.3.</span> <span class="toc-text">全量复制总结</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%A2%9E%E9%87%8F%E5%90%8C%E6%AD%A5"><span class="toc-number">1.3.2.2.</span> <span class="toc-text">增量同步</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="toc-number">1.3.2.3.</span> <span class="toc-text">优化主从复制</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BC%98%E5%8C%96%E5%85%A8%E9%87%8F%E5%90%8C%E6%AD%A5%E6%80%A7%E8%83%BD%EF%BC%9A"><span class="toc-number">1.3.2.3.1.</span> <span class="toc-text">优化全量同步性能：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B0%BD%E9%87%8F%E5%87%8F%E5%B0%91%E5%85%A8%E9%87%8F%E5%90%8C%E6%AD%A5%EF%BC%9A"><span class="toc-number">1.3.2.3.2.</span> <span class="toc-text">尽量减少全量同步：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%99%8D%E4%BD%8E%E4%B8%BB%E8%8A%82%E7%82%B9%E5%90%8C%E6%AD%A5%E5%8E%8B%E5%8A%9B"><span class="toc-number">1.3.2.3.3.</span> <span class="toc-text">降低主节点同步压力</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-2"><span class="toc-number">1.3.3.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%93%A8%E5%85%B5"><span class="toc-number">1.4.</span> <span class="toc-text">Redis哨兵</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%A8%E5%85%B5%E6%9C%BA%E5%88%B6%EF%BC%88Redis-Sentinel%EF%BC%89%E7%9A%84%E4%BD%9C%E7%94%A8%E5%92%8C%E5%8E%9F%E7%90%86"><span class="toc-number">1.4.1.</span> <span class="toc-text">哨兵机制（Redis Sentinel）的作用和原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%93%A8%E5%85%B5%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">哨兵的作用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E7%8A%B6%E6%80%81%E7%9B%91%E6%8E%A7"><span class="toc-number">1.4.1.2.</span> <span class="toc-text">服务状态监控</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4%E7%9A%84%E9%80%89%E4%B8%BE"><span class="toc-number">1.4.1.3.</span> <span class="toc-text">哨兵集群的选举</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B0%E4%B8%BB%E5%BA%93%E7%9A%84%E9%80%89%E5%87%BA"><span class="toc-number">1.4.1.4.</span> <span class="toc-text">新主库的选出</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%85%E9%9A%9C%E7%9A%84%E8%BD%AC%E7%A7%BB"><span class="toc-number">1.4.1.5.</span> <span class="toc-text">故障的转移</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-3"><span class="toc-number">1.4.1.6.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%90%AD%E5%BB%BA%E5%93%A8%E5%85%B5%E9%9B%86%E7%BE%A4"><span class="toc-number">1.4.2.</span> <span class="toc-text">搭建哨兵集群</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">1.4.2.1.</span> <span class="toc-text">创建配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E5%86%99Docker-compose-yml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">1.4.2.2.</span> <span class="toc-text">编写Docker-compose.yml配置文件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-number">1.4.2.3.</span> <span class="toc-text">文件结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.4.2.4.</span> <span class="toc-text">运行服务</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB"><span class="toc-number">1.4.2.5.</span> <span class="toc-text">测试故障转移</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%B3%E9%97%AD%E4%B8%BB%E8%8A%82%E7%82%B9"><span class="toc-number">1.4.2.5.1.</span> <span class="toc-text">关闭主节点</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8Bsentinel%E6%97%A5%E5%BF%97"><span class="toc-number">1.4.2.5.2.</span> <span class="toc-text">查看sentinel日志</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E8%BD%AC%E7%A7%BB%E7%9A%84%E4%B8%BB%E8%8A%82%E7%82%B9"><span class="toc-number">1.4.2.5.3.</span> <span class="toc-text">查看转移的主节点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RedisTemplate%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.4.3.</span> <span class="toc-text">RedisTemplate哨兵模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Spring%E9%85%8D%E7%BD%AE%E5%93%A8%E5%85%B5%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.4.3.1.</span> <span class="toc-text">Spring配置哨兵模式</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BC%95%E5%85%A5redis%E7%9A%84starter%E4%BE%9D%E8%B5%96"><span class="toc-number">1.4.3.1.1.</span> <span class="toc-text">引入redis的starter依赖</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E6%8C%87%E5%AE%9Asentinel%E4%BF%A1%E6%81%AF"><span class="toc-number">1.4.3.1.2.</span> <span class="toc-text">配置文件指定sentinel信息</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E4%B8%BB%E4%BB%8E%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="toc-number">1.4.3.1.3.</span> <span class="toc-text">配置主从读写分离</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E5%88%86%E7%89%87%E9%9B%86%E7%BE%A4"><span class="toc-number">1.5.</span> <span class="toc-text">Redis分片集群</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E7%89%87%E9%9B%86%E7%BE%A4"><span class="toc-number">1.5.1.</span> <span class="toc-text">分片集群</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%A3%E5%88%97%E6%8F%92%E6%A7%BD"><span class="toc-number">1.5.2.</span> <span class="toc-text">散列插槽</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%86%E7%BE%A4%E4%BC%B8%E7%BC%A9"><span class="toc-number">1.5.3.</span> <span class="toc-text">集群伸缩</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB"><span class="toc-number">1.5.4.</span> <span class="toc-text">故障转移</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#RedisTemplate%E8%AE%BF%E9%97%AE%E5%88%86%E7%89%87%E5%88%86%E9%85%8D"><span class="toc-number">1.5.5.</span> <span class="toc-text">RedisTemplate访问分片分配</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="toc-number">1.6.</span> <span class="toc-text">多级缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="toc-number">1.7.</span> <span class="toc-text">Redis最佳实践</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/03/20/hello-world/" title="Hello World"><img src="/img/default-cover/48.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2023/03/20/hello-world/" title="Hello World">Hello World</a><time datetime="2023-03-20T12:37:55.000Z" title="Created 2023-03-20 20:37:55">2023-03-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/03/17/%E9%AB%98%E7%BA%A7RabbitMq/" title="No title"><img src="/img/default-cover/24.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="No title"/></a><div class="content"><a class="title" href="/2023/03/17/%E9%AB%98%E7%BA%A7RabbitMq/" title="No title">No title</a><time datetime="2023-03-17T12:20:22.000Z" title="Created 2023-03-17 20:20:22">2023-03-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/02/27/MySQL%E8%BF%90%E7%BB%B4/" title="MySQL运维"><img src="/img/default-cover/28.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="MySQL运维"/></a><div class="content"><a class="title" href="/2023/02/27/MySQL%E8%BF%90%E7%BB%B4/" title="MySQL运维">MySQL运维</a><time datetime="2023-02-27T05:39:22.000Z" title="Created 2023-02-27 13:39:22">2023-02-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/01/23/SpringCloud/" title="SpringCloud"><img src="/img/default-cover/43.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="SpringCloud"/></a><div class="content"><a class="title" href="/2023/01/23/SpringCloud/" title="SpringCloud">SpringCloud</a><time datetime="2023-01-23T02:31:22.000Z" title="Created 2023-01-23 10:31:22">2023-01-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/01/12/MySQL%E8%BF%9B%E9%98%B6/" title="MySQL进阶"><img src="/img/default-cover/52.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="MySQL进阶"/></a><div class="content"><a class="title" href="/2023/01/12/MySQL%E8%BF%9B%E9%98%B6/" title="MySQL进阶">MySQL进阶</a><time datetime="2023-01-12T02:31:22.000Z" title="Created 2023-01-12 10:31:22">2023-01-12</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By YuanJW</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
