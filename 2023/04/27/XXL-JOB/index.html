@@ -1,0 +1,210 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>XXL-JOB | Hexo</title><meta name="keywords" content="分布式任务"><meta name="author" content="YuanJW"><meta name="copyright" content="YuanJW"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="XXL-JOB概述 XXL-JOB 是一个分布式任务调度平台，其核心设计目标是开发迅速、学习简单、轻量级、易扩展。 中文文档：https:&#x2F;&#x2F;www.xuxueli.com&#x2F;xxl-job&#x2F;  设计思想设计思想是将调度行为抽象形成调度中心公共平台，平台本身不承担业务逻辑，而是负责发起调度请求后，由执行器接收调度请求并执行任务，这里的任务抽象为分散的 JobHandler，交由执行器统一管理。通过这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XXL-JOB">
+<meta property="og:url" content="http://example.com/2023/04/27/XXL-JOB/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="XXL-JOB概述 XXL-JOB 是一个分布式任务调度平台，其核心设计目标是开发迅速、学习简单、轻量级、易扩展。 中文文档：https:&#x2F;&#x2F;www.xuxueli.com&#x2F;xxl-job&#x2F;  设计思想设计思想是将调度行为抽象形成调度中心公共平台，平台本身不承担业务逻辑，而是负责发起调度请求后，由执行器接收调度请求并执行任务，这里的任务抽象为分散的 JobHandler，交由执行器统一管理。通过这">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/img/default-cover/16.png">
+<meta property="article:published_time" content="2023-04-27T07:31:22.000Z">
+<meta property="article:modified_time" content="2023-05-02T21:06:18.692Z">
+<meta property="article:author" content="YuanJW">
+<meta property="article:tag" content="分布式任务">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/default-cover/16.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/04/27/XXL-JOB/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'XXL-JOB',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-05-03 05:06:18'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default-cover/16.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Hexo</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">XXL-JOB</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-04-27T07:31:22.000Z" title="Created 2023-04-27 15:31:22">2023-04-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-05-02T21:06:18.692Z" title="Updated 2023-05-03 05:06:18">2023-05-03</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="XXL-JOB"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="XXL-JOB"><a href="#XXL-JOB" class="headerlink" title="XXL-JOB"></a>XXL-JOB</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><blockquote>
+<p>XXL-JOB 是一个<strong>分布式任务调度平台</strong>，其核心设计目标是开发迅速、学习简单、轻量级、易扩展。</p>
+<p>中文文档：<a target="_blank" rel="noopener" href="https://www.xuxueli.com/xxl-job/">https://www.xuxueli.com/xxl-job/</a></p>
+</blockquote>
+<h3 id="设计思想"><a href="#设计思想" class="headerlink" title="设计思想"></a>设计思想</h3><p><strong>设计思想</strong>是将调度行为抽象形成<strong>调度中心公共平台</strong>，平台本身不承担业务逻辑，而是负责<strong>发起调度请求</strong>后，由<strong>执行器</strong>接收调度请求并<strong>执行任务</strong>，这里的任务抽象为<strong>分散的 JobHandler</strong>，交由执行器统一管理。通过这种方式即可实现<strong>调度</strong>与<strong>任务</strong>相互解藕，从而提高系统整体的稳定性和拓展性。</p>
+<h3 id="系统组成"><a href="#系统组成" class="headerlink" title="系统组成"></a>系统组成</h3><ul>
+<li><strong>调度模块（调度中心）</strong>：<br>负责管理调度信息，按照调度配置发出调度请求，自身不承担业务代码。调度系统与任务解耦，提高了系统可用性和稳定性，同时调度系统性能不再受限于任务模块；<br>支持可视化、简单且动态的管理调度信息，包括任务新建，更新，删除，GLUE开发和任务报警等，所有上述操作都会实时生效，同时支持监控调度结果以及执行日志，支持执行器Failover。</li>
+<li><strong>执行模块（执行器）</strong>：<br>负责接收调度请求并执行任务逻辑。任务模块专注于任务的执行等操作，开发和维护更加简单和高效；<br>接收“调度中心”的执行请求、终止请求和日志请求等。</li>
+</ul>
+<h3 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h3><p><img src="https://s2.loli.net/2023/05/03/dut1C8f7FlkeNwD.png" alt="image-20230503005646974"></p>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><p><img src="https://s2.loli.net/2023/05/03/xREeT5SLyKiOpAW.png" alt="image-20230503005136536"></p>
+<h2 id="分布式任务调度平台"><a href="#分布式任务调度平台" class="headerlink" title="分布式任务调度平台"></a>分布式任务调度平台</h2><blockquote>
+<p>分布式下，每个服务都可以搭建为集群，这样的好处是可以将任务切片分给每一个服务从而实现并行执行，提高任务调度的处理效率。</p>
+</blockquote>
+<p>在集群环境下，使用单体系统的任务调度会出现很多问题：</p>
+<ul>
+<li>无法做到对任务的控制，避免任务的重复执行</li>
+<li>单体应用宕机会存在任务丢失</li>
+<li>无法做到弹性扩容即增加服务实例</li>
+<li>如何做到对任务调度的执行情况统一监测</li>
+</ul>
+<h2 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h2><h3 id="拉取镜像"><a href="#拉取镜像" class="headerlink" title="拉取镜像"></a>拉取镜像</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull xuxueli/xxl-job-admin:2.3.1</span><br></pre></td></tr></table></figure>
+
+<h3 id="创建数据卷目录"><a href="#创建数据卷目录" class="headerlink" title="创建数据卷目录"></a>创建数据卷目录</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p -m 777 /mydata/xxl-job/data/applogs</span><br></pre></td></tr></table></figure>
+
+<h3 id="SQL文件导入到指定数据库"><a href="#SQL文件导入到指定数据库" class="headerlink" title="SQL文件导入到指定数据库"></a>SQL文件导入到指定数据库</h3><blockquote>
+<p>SQL文件：<a target="_blank" rel="noopener" href="https://gitee.com/xuxueli0323/xxl-job/blob/master/doc/db/tables_xxl_job.sql">https://gitee.com/xuxueli0323/xxl-job/blob/master/doc/db/tables_xxl_job.sql</a></p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/05/03/kgyw69xODiFzKra.png" alt="image-20230503011358348"></p>
+<h3 id="运行容器"><a href="#运行容器" class="headerlink" title="运行容器"></a>运行容器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run -p 8080:8080 --restart=always \</span><br><span class="line">-e PARAMS=&quot;--spring.datasource.url=jdbc:mysql://1.117.34.49:3306/xxl_job?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true&amp;serverTimezone=Asia/Shanghai --spring.datasource.username=root --spring.datasource.password=1qaz@WSX#EDC&quot; \</span><br><span class="line"> -v /mydata/xxl-job/data/applogs:/data/applogs \</span><br><span class="line"> --name xxl-job-admin  \</span><br><span class="line"> -d xuxueli/xxl-job-admin:2.3.1</span><br></pre></td></tr></table></figure>
+
+<h3 id="访问任务调度平台"><a href="#访问任务调度平台" class="headerlink" title="访问任务调度平台"></a>访问任务调度平台</h3><blockquote>
+<p>访问：<a target="_blank" rel="noopener" href="http://1.117.34.49:8080/xxl-job-admin">http://1.117.34.49:8080/xxl-job-admin</a></p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/05/03/GJvwaOesETqcd6x.png" alt="image-20230503013351386"></p>
+<h2 id="SpringBoot集成XXL-JOB"><a href="#SpringBoot集成XXL-JOB" class="headerlink" title="SpringBoot集成XXL-JOB"></a>SpringBoot集成XXL-JOB</h2><blockquote>
+<p>XXL-JOB由<strong>调度中心</strong>和<strong>执行器</strong>组成，上面部署了调度中心，下面介绍如何配置部署执行器。</p>
+</blockquote>
+<h3 id="导入依赖"><a href="#导入依赖" class="headerlink" title="导入依赖"></a>导入依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.xuxueli<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>xxl-job-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.3.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="配置application-yml文件"><a href="#配置application-yml文件" class="headerlink" title="配置application.yml文件"></a>配置application.yml文件</h3><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">xxl:</span></span><br><span class="line">  <span class="attr">job:</span></span><br><span class="line">    <span class="attr">admin:</span></span><br><span class="line">      <span class="comment"># 指定调度中心部署根地址 [选填]：如调度中心集群部署存在多个地址则用逗号分隔。执行器将会使用该地址进行&quot;执行器心跳注册&quot;和&quot;任务结果回调&quot;；为空则关闭自动注册</span></span><br><span class="line">      <span class="attr">address:</span> <span class="string">http://1.117.34.49:8080/xxl-job-admin</span></span><br><span class="line">    <span class="comment"># 执行器通讯TOKEN [选填]：非空时启用</span></span><br><span class="line">    <span class="attr">access-token:</span> <span class="string">default_token</span></span><br><span class="line">    <span class="attr">executor:</span></span><br><span class="line">      <span class="comment"># 执行器AppName [选填]：执行器心跳注册分组依据；为空则关闭自动注册</span></span><br><span class="line">      <span class="attr">app-name:</span> <span class="string">spring-demo-xxl-job-executor</span></span><br><span class="line">      <span class="comment"># 执行器注册 [选填]：优先使用该配置作为注册地址，为空时使用内嵌服务 ”IP:PORT“ 作为注册地址。从而更灵活的支持容器类型执行器动态IP和动态映射端口问题</span></span><br><span class="line">      <span class="attr">address:</span></span><br><span class="line">      <span class="comment"># 执行器IP [选填]：默认为空表示自动获取IP，多网卡时可手动设置指定IP，该IP不会绑定Host仅作为通讯实用；地址信息用于 &quot;执行器注册&quot; 和 &quot;调度中心请求并触发任务&quot;</span></span><br><span class="line">      <span class="attr">ip:</span></span><br><span class="line">      <span class="comment"># 执行器端口号 [选填]：小于等于0则自动获取；默认端口为9999，单机部署多个执行器时，注意要配置不同执行器端口（执行器实际上是一个内嵌的服务，默认端口9999，配置多个同一服务实例时需要指定不同的执行器端口，否则会端口冲突）</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">9999</span></span><br><span class="line">      <span class="comment"># 执行器运行日志文件存储磁盘路径 [选填] ：需要对该路径拥有读写权限；为空则使用默认路径</span></span><br><span class="line">      <span class="attr">log-path:</span> <span class="string">/data/applogs/xxl-job/jobhandler</span></span><br><span class="line">      <span class="comment"># 执行器日志文件保存天数 [选填] ： 过期日志自动清理, 限制值大于等于3时生效; 否则, 如-1, 关闭自动清理功能</span></span><br><span class="line">      <span class="attr">log-retention-days:</span> <span class="number">-1</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="编辑配置类"><a href="#编辑配置类" class="headerlink" title="编辑配置类"></a>编辑配置类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;xxl.job&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">XxlJobProps</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 调度中心配置</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> XxlJobAdminProps admin;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 执行器配置</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> XxlJobExecutorProps executor;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 与调度中心交互的accessToken</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String accessToken;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Data</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">XxlJobAdminProps</span> &#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 调度中心地址</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">private</span> String address;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Data</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">XxlJobExecutorProps</span> &#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 执行器名称</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">private</span> String appName;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 执行器 IP</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">private</span> String ip;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 执行器端口</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">private</span> <span class="type">int</span> port;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 执行器日志位置</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">private</span> String logPath;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 执行器日志保留天数</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">private</span> <span class="type">int</span> logRetentionDays;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="调度中心新增执行器"><a href="#调度中心新增执行器" class="headerlink" title="调度中心新增执行器"></a>调度中心新增执行器</h3><p><img src="https://s2.loli.net/2023/05/03/y45dCv6mLEiOgAf.png" alt="image-20230503045053765"></p>
+<h4 id="执行器的配置属性："><a href="#执行器的配置属性：" class="headerlink" title="执行器的配置属性："></a>执行器的配置属性：</h4><ul>
+<li>AppName： 每个执行器集群的唯一标示 AppName，执行器会周期性以 AppName 为对象进行自动注册。可通过该配置自动发现注册成功的执行器，供任务调度时使用。</li>
+<li>名称：执行器的名称（可以使用中文）</li>
+<li>注册方式：调度中心获取执行器地址的方式。<ul>
+<li>自动注册：执行器自动进行执行器注册，调度中心通过底层注册表可以动态发现执行器机器地址。</li>
+<li>手动录入：人工手动录入执行器的地址信息，多地址逗号分隔，供调度中心使用。</li>
+</ul>
+</li>
+<li>机器地址：”注册方式”为”手动录入”时有效，支持人工维护执行器的地址信息。</li>
+</ul>
+<h3 id="配置执行器自定义任务："><a href="#配置执行器自定义任务：" class="headerlink" title="配置执行器自定义任务："></a>配置执行器自定义任务：</h3><blockquote>
+<p>配置自定义任务有很多种模式，包括Bean模式（基于方法）、Bean模式（基于类）、GLUE模式等。这里介绍通过Bean模式（基于方法)。</p>
+<p>Bean模式（基于方法）就是每个任务对应一个方法，通过添加 <code>@XxLJob(value=&quot;自定义JobHandler名称&quot;, init = &quot;JobHandler初始化方法&quot;, destroy = &quot;JobHandler销毁方法&quot;)</code> 注解完成定义。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DemoJob</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 基于方法注入，每个任务对应一个方法</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@XxlJob</span>: ，注解value值对应的是调度中心新建任务的JobHandler属性的值</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> param 定时任务参数</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 执行状态</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception 任务异常</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@XxlJob(value = &quot;demoHandler&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">demoHandler</span><span class="params">(String param)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">// 动态获取传递的参数（根据参数不同，当前调度的任务不同）</span></span><br><span class="line">        log.info(<span class="string">&quot;【param】= &#123;&#125;&quot;</span>, param);</span><br><span class="line">        <span class="comment">// 执行日志： 通过XxlJobHelper.log打印日志</span></span><br><span class="line">        XxlJobHelper.log(<span class="string">&quot;demo task run at: &#123;&#125;&quot;</span>, DateUtil.now());</span><br><span class="line">        <span class="comment">// 任务结果：默认任务结果为&quot;成功&quot;状态，不需要主动设置；可以通过XxlJobHelper.handleSuccess()/handleFail()自动设置任务结果</span></span><br><span class="line">        <span class="keyword">if</span> (RandomUtil.randomInt(<span class="number">1</span>, <span class="number">11</span>) % <span class="number">2</span> == <span class="number">0</span>) &#123;</span><br><span class="line">            XxlJobHelper.handleSuccess();</span><br><span class="line">        &#125;</span><br><span class="line">        XxlJobHelper.handleFail();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="调度中心新增任务"><a href="#调度中心新增任务" class="headerlink" title="调度中心新增任务"></a>调度中心新增任务</h3><p><img src="https://s2.loli.net/2023/05/03/j4zLSsDGpUTfVcw.webp" alt="image.png"></p>
+<p><img src="https://s2.loli.net/2023/05/03/ktL8VusAiKegNUn.png" alt="image-20230503045742690"></p>
+<h3 id="任务配置属性详细说明"><a href="#任务配置属性详细说明" class="headerlink" title="任务配置属性详细说明"></a>任务配置属性详细说明</h3><p><img src="https://s2.loli.net/2023/05/03/r1aVQWPslm9Ljfu.png" alt="image-20230503045953543"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="http://example.com">YuanJW</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2023/04/27/XXL-JOB/">http://example.com/2023/04/27/XXL-JOB/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BB%BB%E5%8A%A1/">分布式任务</a></div><div class="post_share"><div class="social-share" data-image="/img/default-cover/16.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/ShareJS/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/ShareJS/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/03/20/hello-world/"><img class="next-cover" src="/img/default-cover/29.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Hello World</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YuanJW</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">27</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">12</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/XiaoYuanJW" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="/2754742370@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#XXL-JOB"><span class="toc-number">1.</span> <span class="toc-text">XXL-JOB</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.1.</span> <span class="toc-text">概述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BE%E8%AE%A1%E6%80%9D%E6%83%B3"><span class="toc-number">1.1.1.</span> <span class="toc-text">设计思想</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E7%BB%84%E6%88%90"><span class="toc-number">1.1.2.</span> <span class="toc-text">系统组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84"><span class="toc-number">1.1.3.</span> <span class="toc-text">架构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%80%A7"><span class="toc-number">1.2.</span> <span class="toc-text">特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E5%B9%B3%E5%8F%B0"><span class="toc-number">1.3.</span> <span class="toc-text">分布式任务调度平台</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%83%A8%E7%BD%B2"><span class="toc-number">1.4.</span> <span class="toc-text">部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F"><span class="toc-number">1.4.1.</span> <span class="toc-text">拉取镜像</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%8D%B7%E7%9B%AE%E5%BD%95"><span class="toc-number">1.4.2.</span> <span class="toc-text">创建数据卷目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#SQL%E6%96%87%E4%BB%B6%E5%AF%BC%E5%85%A5%E5%88%B0%E6%8C%87%E5%AE%9A%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.4.3.</span> <span class="toc-text">SQL文件导入到指定数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8"><span class="toc-number">1.4.4.</span> <span class="toc-text">运行容器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%BF%E9%97%AE%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E5%B9%B3%E5%8F%B0"><span class="toc-number">1.4.5.</span> <span class="toc-text">访问任务调度平台</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SpringBoot%E9%9B%86%E6%88%90XXL-JOB"><span class="toc-number">1.5.</span> <span class="toc-text">SpringBoot集成XXL-JOB</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%BC%E5%85%A5%E4%BE%9D%E8%B5%96"><span class="toc-number">1.5.1.</span> <span class="toc-text">导入依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AEapplication-yml%E6%96%87%E4%BB%B6"><span class="toc-number">1.5.2.</span> <span class="toc-text">配置application.yml文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%BE%91%E9%85%8D%E7%BD%AE%E7%B1%BB"><span class="toc-number">1.5.3.</span> <span class="toc-text">编辑配置类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E5%BA%A6%E4%B8%AD%E5%BF%83%E6%96%B0%E5%A2%9E%E6%89%A7%E8%A1%8C%E5%99%A8"><span class="toc-number">1.5.4.</span> <span class="toc-text">调度中心新增执行器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E5%99%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E5%B1%9E%E6%80%A7%EF%BC%9A"><span class="toc-number">1.5.4.1.</span> <span class="toc-text">执行器的配置属性：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E6%89%A7%E8%A1%8C%E5%99%A8%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BB%BB%E5%8A%A1%EF%BC%9A"><span class="toc-number">1.5.5.</span> <span class="toc-text">配置执行器自定义任务：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B0%83%E5%BA%A6%E4%B8%AD%E5%BF%83%E6%96%B0%E5%A2%9E%E4%BB%BB%E5%8A%A1"><span class="toc-number">1.5.6.</span> <span class="toc-text">调度中心新增任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E9%85%8D%E7%BD%AE%E5%B1%9E%E6%80%A7%E8%AF%A6%E7%BB%86%E8%AF%B4%E6%98%8E"><span class="toc-number">1.5.7.</span> <span class="toc-text">任务配置属性详细说明</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/04/27/XXL-JOB/" title="XXL-JOB"><img src="/img/default-cover/16.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="XXL-JOB"/></a><div class="content"><a class="title" href="/2023/04/27/XXL-JOB/" title="XXL-JOB">XXL-JOB</a><time datetime="2023-04-27T07:31:22.000Z" title="Created 2023-04-27 15:31:22">2023-04-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/03/20/hello-world/" title="Hello World"><img src="/img/default-cover/29.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"/></a><div class="content"><a class="title" href="/2023/03/20/hello-world/" title="Hello World">Hello World</a><time datetime="2023-03-20T12:37:55.000Z" title="Created 2023-03-20 20:37:55">2023-03-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/03/17/%E9%AB%98%E7%BA%A7RabbitMq/" title="No title"><img src="/img/default-cover/6.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="No title"/></a><div class="content"><a class="title" href="/2023/03/17/%E9%AB%98%E7%BA%A7RabbitMq/" title="No title">No title</a><time datetime="2023-03-17T12:20:22.000Z" title="Created 2023-03-17 20:20:22">2023-03-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/02/27/MySQL%E8%BF%90%E7%BB%B4/" title="MySQL运维"><img src="/img/default-cover/53.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="MySQL运维"/></a><div class="content"><a class="title" href="/2023/02/27/MySQL%E8%BF%90%E7%BB%B4/" title="MySQL运维">MySQL运维</a><time datetime="2023-02-27T05:39:22.000Z" title="Created 2023-02-27 13:39:22">2023-02-27</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/01/23/SpringCloud/" title="SpringCloud"><img src="/img/default-cover/14.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="SpringCloud"/></a><div class="content"><a class="title" href="/2023/01/23/SpringCloud/" title="SpringCloud">SpringCloud</a><time datetime="2023-01-23T02:31:22.000Z" title="Created 2023-01-23 10:31:22">2023-01-23</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By YuanJW</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
