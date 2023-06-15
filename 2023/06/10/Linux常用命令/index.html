@@ -1,0 +1,445 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Linux常用命令 | Hexo</title><meta name="keywords" content="Linux"><meta name="author" content="YuanJW"><meta name="copyright" content="YuanJW"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Linux常用命令系统服务管理systemctl Systemctl命令是Service和chkconfig命令的组合体，可用于管理系统  输出系统各个服务的状态1systemctl list-units --type&#x3D;service   查看服务的运行状态1systemctl status firewalld   关闭服务1systemctl stop firewalld  启动服务1syste">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux常用命令">
+<meta property="og:url" content="http://example.com/2023/06/10/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Linux常用命令系统服务管理systemctl Systemctl命令是Service和chkconfig命令的组合体，可用于管理系统  输出系统各个服务的状态1systemctl list-units --type&#x3D;service   查看服务的运行状态1systemctl status firewalld   关闭服务1systemctl stop firewalld  启动服务1syste">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/img/default-cover/15.png">
+<meta property="article:published_time" content="2023-06-10T02:31:22.000Z">
+<meta property="article:modified_time" content="2023-06-15T05:46:27.495Z">
+<meta property="article:author" content="YuanJW">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/default-cover/15.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/06/10/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Linux常用命令',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-06-15 13:46:27'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default-cover/15.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Hexo</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Linux常用命令</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-06-10T02:31:22.000Z" title="Created 2023-06-10 10:31:22">2023-06-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2023-06-15T05:46:27.495Z" title="Updated 2023-06-15 13:46:27">2023-06-15</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Linux常用命令"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Linux常用命令"><a href="#Linux常用命令" class="headerlink" title="Linux常用命令"></a>Linux常用命令</h1><h2 id="系统服务管理"><a href="#系统服务管理" class="headerlink" title="系统服务管理"></a>系统服务管理</h2><h3 id="systemctl"><a href="#systemctl" class="headerlink" title="systemctl"></a>systemctl</h3><blockquote>
+<p><code>Systemctl</code>命令是<code>Service</code>和<code>chkconfig</code>命令的组合体，可用于<strong>管理系统</strong></p>
+</blockquote>
+<h4 id="输出系统各个服务的状态"><a href="#输出系统各个服务的状态" class="headerlink" title="输出系统各个服务的状态"></a>输出系统各个服务的状态</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl list-units --<span class="built_in">type</span>=service</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/d2BxClOjs897YZV.png" alt="image-20230611145509598"></p>
+<h4 id="查看服务的运行状态"><a href="#查看服务的运行状态" class="headerlink" title="查看服务的运行状态"></a>查看服务的运行状态</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl status firewalld</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/kRXjOzF5wx8ch7y.png" alt="image-20230611145212350"></p>
+<h4 id="关闭服务"><a href="#关闭服务" class="headerlink" title="关闭服务"></a>关闭服务</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld</span><br></pre></td></tr></table></figure>
+
+<h4 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start firewalld</span><br></pre></td></tr></table></figure>
+
+<h4 id="重新启动服务"><a href="#重新启动服务" class="headerlink" title="重新启动服务"></a>重新启动服务</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl reload firewalld</span><br></pre></td></tr></table></figure>
+
+<h4 id="禁止服务开机自启动"><a href="#禁止服务开机自启动" class="headerlink" title="禁止服务开机自启动"></a>禁止服务开机自启动</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">disable</span> firewalld</span><br></pre></td></tr></table></figure>
+
+<h4 id="开启服务开机自启动"><a href="#开启服务开机自启动" class="headerlink" title="开启服务开机自启动"></a>开启服务开机自启动</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> firewalld</span><br></pre></td></tr></table></figure>
+
+<h2 id="文件管理"><a href="#文件管理" class="headerlink" title="文件管理"></a>文件管理</h2><h3 id="ls"><a href="#ls" class="headerlink" title="ls"></a>ls</h3><blockquote>
+<p>列出指定目录下的所有文件</p>
+</blockquote>
+<p>列出<code>/</code>目录下的文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -l /</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/k3uFzoLSnwgNf2I.png" alt="image-20230611150319289"></p>
+<h3 id="pwd"><a href="#pwd" class="headerlink" title="pwd"></a>pwd</h3><blockquote>
+<p>获取目前所在工作目录的绝对路径</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">pwd</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/vPpo2TK3kmB5iln.png" alt="image-20230611150328686"></p>
+<h3 id="cd"><a href="#cd" class="headerlink" title="cd"></a>cd</h3><blockquote>
+<p> 改变当前工作目录</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /</span><br></pre></td></tr></table></figure>
+
+<h3 id="date"><a href="#date" class="headerlink" title="date"></a>date</h3><blockquote>
+<p>显示或修改系统时间与日期</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">date</span> <span class="string">&#x27;+%Y-%m-%d %H:%M:%S&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="passwd"><a href="#passwd" class="headerlink" title="passwd"></a>passwd</h3><blockquote>
+<p>用于设置用户密码</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">passwd root</span><br></pre></td></tr></table></figure>
+
+<h3 id="su"><a href="#su" class="headerlink" title="su"></a>su</h3><blockquote>
+<p>改变用户身份（切换到超级用户）</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">su ~</span><br></pre></td></tr></table></figure>
+
+<h3 id="clear"><a href="#clear" class="headerlink" title="clear"></a>clear</h3><blockquote>
+<p>用于清除屏幕信息</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clear</span><br></pre></td></tr></table></figure>
+
+<h3 id="man"><a href="#man" class="headerlink" title="man"></a>man</h3><blockquote>
+<p>显示指定命令的帮助信息 （输入 q 退出）</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">man <span class="built_in">ls</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="who"><a href="#who" class="headerlink" title="who"></a>who</h3><blockquote>
+<p>查询系统处于的运行级别</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">who</span> -r</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>显示目前登录到系统的用户</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">who</span> -buT</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/tRrdahcoUp168sl.png" alt="image-20230611151342802"></p>
+<h3 id="free"><a href="#free" class="headerlink" title="free"></a>free</h3><blockquote>
+<p>显示系统内存状态（单位MB）</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">free -m</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/rCbZKlL7c1HMajk.png" alt="image-20230611151317775"></p>
+<h3 id="ps"><a href="#ps" class="headerlink" title="ps"></a>ps</h3><blockquote>
+<p>显示系统的进程运行的状态</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/btjrY1yfdCkuK7a.png" alt="image-20230611151302013"></p>
+<blockquote>
+<p>查看 <code>sshd</code> 进程的运行状态</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep java</span><br></pre></td></tr></table></figure>
+
+<h3 id="top"><a href="#top" class="headerlink" title="top"></a>top</h3><blockquote>
+<p>查看即时活跃的进程，类似Windows的任务管理器</p>
+</blockquote>
+<p><img src="https://s2.loli.net/2023/06/11/TSZYku3ihAMPy9B.png" alt="image-20230611151608498"></p>
+<h3 id="mkdir"><a href="#mkdir" class="headerlink" title="mkdir"></a>mkdir</h3><blockquote>
+<p>创建目录</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="more"><a href="#more" class="headerlink" title="more"></a>more</h3><blockquote>
+<p>分页查看文件 （例如每页10行查看文件）</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">more -c -10 /var/log/boot.log</span><br></pre></td></tr></table></figure>
+
+<h3 id="cat"><a href="#cat" class="headerlink" title="cat"></a>cat</h3><blockquote>
+<p>查看文件并标名行号</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> -Ab /var/log/boot.log</span><br></pre></td></tr></table></figure>
+
+<h3 id="touch"><a href="#touch" class="headerlink" title="touch"></a>touch</h3><blockquote>
+<p>创建文件</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">touch</span> text.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="rm"><a href="#rm" class="headerlink" title="rm"></a>rm</h3><blockquote>
+<p>删除文件</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> text.txt</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>强制删除某个目录以及其子目录</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> -rf testdir/</span><br></pre></td></tr></table></figure>
+
+<h3 id="cp"><a href="#cp" class="headerlink" title="cp"></a>cp</h3><blockquote>
+<p>用于拷贝文件</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cp</span> -r /mydata/test1 /mydata/test2</span><br></pre></td></tr></table></figure>
+
+<h3 id="mv"><a href="#mv" class="headerlink" title="mv"></a>mv</h3><blockquote>
+<p>移动或者覆盖文件</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mv</span> text1.txt text2.txt</span><br></pre></td></tr></table></figure>
+
+<h2 id="压缩与解压"><a href="#压缩与解压" class="headerlink" title="压缩与解压"></a>压缩与解压</h2><h3 id="tar"><a href="#tar" class="headerlink" title="tar"></a>tar</h3><h4 id="归档"><a href="#归档" class="headerlink" title="归档"></a>归档</h4><blockquote>
+<p>将<code>/etc</code>文件夹中的文件归档到文件<code>etc.tar</code>（并不会进行压缩）</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /mydata/etc/</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -cvf /mydata/etc/etc.tar /etc</span><br></pre></td></tr></table></figure>
+
+<h4 id="压缩"><a href="#压缩" class="headerlink" title="压缩"></a>压缩</h4><blockquote>
+<p>使用 <code>gzip</code> 压缩文件夹<code>/etc</code>中的文件到文件<code>etc.tar.gz</code></p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zcvf /mydata/etc/etc.tar.gz /etc</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>使用 <code>bzip2</code> 压缩文件夹<code>/etc</code>中的文件到文件<code>etc.tar.gz</code></p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -jcvf /mydata/etc/etc.tar.bz2 /etc</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/BcXjDznLE9o8GHl.png" alt="image-20230611170308568"></p>
+<h4 id="分页查看压缩包中内容"><a href="#分页查看压缩包中内容" class="headerlink" title="分页查看压缩包中内容"></a>分页查看压缩包中内容</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -ztvf /mydata/etc/etc.tar.gz | more -c -10</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/26IqJQrGdovEuYH.png" alt="image-20230611170505806"></p>
+<h3 id="解压"><a href="#解压" class="headerlink" title="解压"></a>解压</h3><blockquote>
+<p>解压文件到当前目录</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf /mydata/etc/etc.tar.gz </span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>解压文件到指定目录</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf /mydata/etc/etc.tar.gz -C /mydata/etc</span><br></pre></td></tr></table></figure>
+
+<h2 id="磁盘和网络管理"><a href="#磁盘和网络管理" class="headerlink" title="磁盘和网络管理"></a>磁盘和网络管理</h2><h3 id="df"><a href="#df" class="headerlink" title="df"></a>df</h3><blockquote>
+<p>查看磁盘空间占用情况</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">df</span> -hT</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/rADUipJcPOSCmk2.png" alt="image-20230611170916334"></p>
+<h3 id="dh"><a href="#dh" class="headerlink" title="dh"></a>dh</h3><blockquote>
+<p>查看当前目录下的文件及文件夹所占大小</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">du</span> -h --max-depth=1 ./*</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/DHF4zuR7M3x6brP.png" alt="image-20230611171431823"></p>
+<h3 id="ipconfig"><a href="#ipconfig" class="headerlink" title="ipconfig"></a>ipconfig</h3><blockquote>
+<p>显示当前网络接口状态</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/qh7ijmeoQvPdFb9.png" alt="image-20230611171610564"></p>
+<h3 id="netstat"><a href="#netstat" class="headerlink" title="netstat"></a>netstat</h3><h4 id="查看当前路由信息"><a href="#查看当前路由信息" class="headerlink" title="查看当前路由信息"></a>查看当前路由信息</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -rn</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/k3u7en4TcVjygXd.png" alt="image-20230611171910730"></p>
+<h4 id="查看所有有效的TCP连接"><a href="#查看所有有效的TCP连接" class="headerlink" title="查看所有有效的TCP连接"></a>查看所有有效的TCP连接</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -an</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/eNFBicpmI5UDKjQ.png" alt="image-20230611171943883"></p>
+<h4 id="查看系统中启动的监听服务"><a href="#查看系统中启动的监听服务" class="headerlink" title="查看系统中启动的监听服务"></a>查看系统中启动的监听服务</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -tulnp</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/GiRr7QDFc5B6vY8.png" alt="image-20230611172137234"></p>
+<h4 id="查看处于连接状态的系统资源信息"><a href="#查看处于连接状态的系统资源信息" class="headerlink" title="查看处于连接状态的系统资源信息"></a>查看处于连接状态的系统资源信息</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -atunp</span><br></pre></td></tr></table></figure>
+
+<h3 id="wget"><a href="#wget" class="headerlink" title="wget"></a>wget</h3><blockquote>
+<p>从网络上下载文件</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http://....</span><br></pre></td></tr></table></figure>
+
+<h2 id="文件上传下载"><a href="#文件上传下载" class="headerlink" title="文件上传下载"></a>文件上传下载</h2><h3 id="安装上传下载工具-lrzsz"><a href="#安装上传下载工具-lrzsz" class="headerlink" title="安装上传下载工具 lrzsz"></a>安装上传下载工具 <code>lrzsz</code></h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y lrzsz</span><br></pre></td></tr></table></figure>
+
+<h3 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rz</span><br></pre></td></tr></table></figure>
+
+<h3 id="下载文件"><a href="#下载文件" class="headerlink" title="下载文件"></a>下载文件</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sz fileName</span><br></pre></td></tr></table></figure>
+
+<h2 id="软件安装与管理"><a href="#软件安装与管理" class="headerlink" title="软件安装与管理"></a>软件安装与管理</h2><h3 id="rpm"><a href="#rpm" class="headerlink" title="rpm"></a>rpm</h3><blockquote>
+<p>RPM是<code>Red-Hat Package Manager</code>的缩写，一种Linux下通用的软件包管理方式，可用于安装和管理<code>.rpm</code>结尾的软件包</p>
+</blockquote>
+<h4 id="安装软件包"><a href="#安装软件包" class="headerlink" title="安装软件包"></a>安装软件包</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -ivh nginx-1.14.0-1.el7_4.ngx.x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<h4 id="模糊搜索软件包"><a href="#模糊搜索软件包" class="headerlink" title="模糊搜索软件包"></a>模糊搜索软件包</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -qa | grep nginx</span><br></pre></td></tr></table></figure>
+
+<h4 id="精确查找软件包"><a href="#精确查找软件包" class="headerlink" title="精确查找软件包"></a>精确查找软件包</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -qa nginx</span><br></pre></td></tr></table></figure>
+
+<h4 id="查询软件包的安装路径"><a href="#查询软件包的安装路径" class="headerlink" title="查询软件包的安装路径"></a>查询软件包的安装路径</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -ql nginx-1.12.2-2.el7.x86_64</span><br></pre></td></tr></table></figure>
+
+<h4 id="查看软件包的概要信息"><a href="#查看软件包的概要信息" class="headerlink" title="查看软件包的概要信息"></a>查看软件包的概要信息</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -qi nginx-1.12.2-2.el7.x86_64</span><br></pre></td></tr></table></figure>
+
+<h4 id="验证软件包内容和安装文件是否一致"><a href="#验证软件包内容和安装文件是否一致" class="headerlink" title="验证软件包内容和安装文件是否一致"></a>验证软件包内容和安装文件是否一致</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -V nginx-1.12.2-2.el7.x86_64</span><br></pre></td></tr></table></figure>
+
+<h4 id="更新软件包"><a href="#更新软件包" class="headerlink" title="更新软件包"></a>更新软件包</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -Uvh nginx-1.12.2-2.el7.x86_64</span><br></pre></td></tr></table></figure>
+
+<h4 id="删除软件包"><a href="#删除软件包" class="headerlink" title="删除软件包"></a>删除软件包</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -e nginx-1.12.2-2.el7.x86_64</span><br></pre></td></tr></table></figure>
+
+<h3 id="yum"><a href="#yum" class="headerlink" title="yum"></a>yum</h3><blockquote>
+<p>Yum是<code>Yellow dog Updater, Modified</code>的缩写，能够在线自动下载RPM包并安装，可以自动处理依赖性关系，并且一次安装所有依赖的软件包</p>
+</blockquote>
+<h4 id="安装软件包-1"><a href="#安装软件包-1" class="headerlink" title="安装软件包"></a>安装软件包</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install nginx</span><br></pre></td></tr></table></figure>
+
+<h4 id="检查更新软件包"><a href="#检查更新软件包" class="headerlink" title="检查更新软件包"></a>检查更新软件包</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum check-update</span><br></pre></td></tr></table></figure>
+
+<h4 id="更新指定的软件包"><a href="#更新指定的软件包" class="headerlink" title="更新指定的软件包"></a>更新指定的软件包</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update nginx</span><br></pre></td></tr></table></figure>
+
+<h4 id="在资源库中查找软件包信息"><a href="#在资源库中查找软件包信息" class="headerlink" title="在资源库中查找软件包信息"></a>在资源库中查找软件包信息</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum info nginx*</span><br></pre></td></tr></table></figure>
+
+<h4 id="列出已经安装的所有软件包"><a href="#列出已经安装的所有软件包" class="headerlink" title="列出已经安装的所有软件包"></a>列出已经安装的所有软件包</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum info installed</span><br></pre></td></tr></table></figure>
+
+<h4 id="列出软件包名称"><a href="#列出软件包名称" class="headerlink" title="列出软件包名称"></a>列出软件包名称</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum list nginx*</span><br></pre></td></tr></table></figure>
+
+<h4 id="模糊搜索软件包-1"><a href="#模糊搜索软件包-1" class="headerlink" title="模糊搜索软件包"></a>模糊搜索软件包</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum search nginx</span><br></pre></td></tr></table></figure>
+
+<h2 id="用户管理"><a href="#用户管理" class="headerlink" title="用户管理"></a>用户管理</h2><h3 id="用户信息查看"><a href="#用户信息查看" class="headerlink" title="用户信息查看"></a>用户信息查看</h3><h4 id="查看用户信息"><a href="#查看用户信息" class="headerlink" title="查看用户信息"></a>查看用户信息</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/passwd</span><br></pre></td></tr></table></figure>
+
+<p><img src="/Users/yuanjianwei/Library/Application%20Support/typora-user-images/image-20230611175136841.png" alt="image-20230611175136841"></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用户信息格式（用户名：密码：用户标识号：组标识号：组注释性描述：主目录：默认shell）</span></span><br><span class="line">root:x:0:0:root:/root:/bin/bash</span><br></pre></td></tr></table></figure>
+
+<h4 id="查看用户组信息"><a href="#查看用户组信息" class="headerlink" title="查看用户组信息"></a>查看用户组信息</h4><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /etc/group</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/8QKhGDPAwLEktWi.png" alt="image-20230611175340673"></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 组名:密码:组标识号:组内用户列表</span></span><br><span class="line">root:x:0</span><br></pre></td></tr></table></figure>
+
+<h3 id="passwd-1"><a href="#passwd-1" class="headerlink" title="passwd"></a>passwd</h3><blockquote>
+<p>用于设置用户密码</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">passwd root</span><br></pre></td></tr></table></figure>
+
+<h3 id="su-1"><a href="#su-1" class="headerlink" title="su"></a>su</h3><blockquote>
+<p>改变用户身份</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 切换到root用户</span></span><br><span class="line">su ~</span><br></pre></td></tr></table></figure>
+
+<h3 id="groupadd"><a href="#groupadd" class="headerlink" title="groupadd"></a>groupadd</h3><blockquote>
+<p>添加用户组，使用<code>-g</code>可以设置用户组的标志号</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">groupadd -g 1024 testgroup</span><br></pre></td></tr></table></figure>
+
+<h3 id="groupdel"><a href="#groupdel" class="headerlink" title="groupdel"></a>groupdel</h3><blockquote>
+<p>删除用户组</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">groupdel testgroup</span><br></pre></td></tr></table></figure>
+
+<h3 id="useradd"><a href="#useradd" class="headerlink" title="useradd"></a>useradd</h3><blockquote>
+<p>添加用户，<code>-u</code> 设置标志号，<code>-g</code> 设置主用户组</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">useradd -u 1024 -g testgroup testuser</span><br></pre></td></tr></table></figure>
+
+<h3 id="usermod"><a href="#usermod" class="headerlink" title="usermod"></a>usermod</h3><blockquote>
+<p>修改用户所属用户组</p>
+</blockquote>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">usermod -g docker testuser</span><br></pre></td></tr></table></figure>
+
+<h3 id="userdel"><a href="#userdel" class="headerlink" title="userdel"></a>userdel</h3><blockquote>
+<p>删除用户，使用 <code>-r</code> 删除用户主目录</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">userdel testuser -r</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://s2.loli.net/2023/06/11/EyOYweaqHTL29QJ.png" alt="image-20230611180332753"></p>
+<h2 id="文件基本属性"><a href="#文件基本属性" class="headerlink" title="文件基本属性"></a>文件基本属性</h2><blockquote>
+<p>Linux 系统是一种典型的多用户系统，不同的用户处于不同的地位，拥有不同的权限。</p>
+</blockquote>
+<h3 id="chown"><a href="#chown" class="headerlink" title="chown"></a>chown</h3><blockquote>
+<p>修改所属用户与组</p>
+</blockquote>
+<h3 id="chmod"><a href="#chmod" class="headerlink" title="chmod"></a>chmod</h3><blockquote>
+<p>修改用户的权限</p>
+</blockquote>
+<p>使用 <strong>ll</strong> 或者 <strong>ls –l</strong> 命令来显示一个文件的属性以及文件所属的用户和组：</p>
+<p><img src="https://s2.loli.net/2023/06/11/yMbT5ZEdKvo36AF.png" alt="image-20230611183141796"></p>
+<p><img src="https://s2.loli.net/2023/06/11/Yovs4a5plLeMJ3E.png" alt="image-20230611183240381"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="http://example.com">YuanJW</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2023/06/10/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">http://example.com/2023/06/10/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/">Linux</a></div><div class="post_share"><div class="social-share" data-image="/img/default-cover/15.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/ShareJS/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/ShareJS/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2023/05/24/Spring%E5%8E%9F%E7%90%86/"><img class="next-cover" src="/img/default-cover/33.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Spring 原理</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YuanJW</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">32</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">17</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/XiaoYuanJW" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="/2754742370@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">1.</span> <span class="toc-text">Linux常用命令</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86"><span class="toc-number">1.1.</span> <span class="toc-text">系统服务管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#systemctl"><span class="toc-number">1.1.1.</span> <span class="toc-text">systemctl</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E7%B3%BB%E7%BB%9F%E5%90%84%E4%B8%AA%E6%9C%8D%E5%8A%A1%E7%9A%84%E7%8A%B6%E6%80%81"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">输出系统各个服务的状态</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E7%9A%84%E8%BF%90%E8%A1%8C%E7%8A%B6%E6%80%81"><span class="toc-number">1.1.1.2.</span> <span class="toc-text">查看服务的运行状态</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E9%97%AD%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.1.1.3.</span> <span class="toc-text">关闭服务</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.1.1.4.</span> <span class="toc-text">启动服务</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%87%8D%E6%96%B0%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.1.1.5.</span> <span class="toc-text">重新启动服务</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%A6%81%E6%AD%A2%E6%9C%8D%E5%8A%A1%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E5%8A%A8"><span class="toc-number">1.1.1.6.</span> <span class="toc-text">禁止服务开机自启动</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%80%E5%90%AF%E6%9C%8D%E5%8A%A1%E5%BC%80%E6%9C%BA%E8%87%AA%E5%90%AF%E5%8A%A8"><span class="toc-number">1.1.1.7.</span> <span class="toc-text">开启服务开机自启动</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">文件管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ls"><span class="toc-number">1.2.1.</span> <span class="toc-text">ls</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pwd"><span class="toc-number">1.2.2.</span> <span class="toc-text">pwd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cd"><span class="toc-number">1.2.3.</span> <span class="toc-text">cd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#date"><span class="toc-number">1.2.4.</span> <span class="toc-text">date</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#passwd"><span class="toc-number">1.2.5.</span> <span class="toc-text">passwd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#su"><span class="toc-number">1.2.6.</span> <span class="toc-text">su</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#clear"><span class="toc-number">1.2.7.</span> <span class="toc-text">clear</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#man"><span class="toc-number">1.2.8.</span> <span class="toc-text">man</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#who"><span class="toc-number">1.2.9.</span> <span class="toc-text">who</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#free"><span class="toc-number">1.2.10.</span> <span class="toc-text">free</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ps"><span class="toc-number">1.2.11.</span> <span class="toc-text">ps</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#top"><span class="toc-number">1.2.12.</span> <span class="toc-text">top</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mkdir"><span class="toc-number">1.2.13.</span> <span class="toc-text">mkdir</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#more"><span class="toc-number">1.2.14.</span> <span class="toc-text">more</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cat"><span class="toc-number">1.2.15.</span> <span class="toc-text">cat</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#touch"><span class="toc-number">1.2.16.</span> <span class="toc-text">touch</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#rm"><span class="toc-number">1.2.17.</span> <span class="toc-text">rm</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cp"><span class="toc-number">1.2.18.</span> <span class="toc-text">cp</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mv"><span class="toc-number">1.2.19.</span> <span class="toc-text">mv</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%8B%E7%BC%A9%E4%B8%8E%E8%A7%A3%E5%8E%8B"><span class="toc-number">1.3.</span> <span class="toc-text">压缩与解压</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#tar"><span class="toc-number">1.3.1.</span> <span class="toc-text">tar</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BD%92%E6%A1%A3"><span class="toc-number">1.3.1.1.</span> <span class="toc-text">归档</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%8B%E7%BC%A9"><span class="toc-number">1.3.1.2.</span> <span class="toc-text">压缩</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E9%A1%B5%E6%9F%A5%E7%9C%8B%E5%8E%8B%E7%BC%A9%E5%8C%85%E4%B8%AD%E5%86%85%E5%AE%B9"><span class="toc-number">1.3.1.3.</span> <span class="toc-text">分页查看压缩包中内容</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%8E%8B"><span class="toc-number">1.3.2.</span> <span class="toc-text">解压</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A3%81%E7%9B%98%E5%92%8C%E7%BD%91%E7%BB%9C%E7%AE%A1%E7%90%86"><span class="toc-number">1.4.</span> <span class="toc-text">磁盘和网络管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#df"><span class="toc-number">1.4.1.</span> <span class="toc-text">df</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dh"><span class="toc-number">1.4.2.</span> <span class="toc-text">dh</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ipconfig"><span class="toc-number">1.4.3.</span> <span class="toc-text">ipconfig</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#netstat"><span class="toc-number">1.4.4.</span> <span class="toc-text">netstat</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E8%B7%AF%E7%94%B1%E4%BF%A1%E6%81%AF"><span class="toc-number">1.4.4.1.</span> <span class="toc-text">查看当前路由信息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E6%89%80%E6%9C%89%E6%9C%89%E6%95%88%E7%9A%84TCP%E8%BF%9E%E6%8E%A5"><span class="toc-number">1.4.4.2.</span> <span class="toc-text">查看所有有效的TCP连接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E7%B3%BB%E7%BB%9F%E4%B8%AD%E5%90%AF%E5%8A%A8%E7%9A%84%E7%9B%91%E5%90%AC%E6%9C%8D%E5%8A%A1"><span class="toc-number">1.4.4.3.</span> <span class="toc-text">查看系统中启动的监听服务</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E5%A4%84%E4%BA%8E%E8%BF%9E%E6%8E%A5%E7%8A%B6%E6%80%81%E7%9A%84%E7%B3%BB%E7%BB%9F%E8%B5%84%E6%BA%90%E4%BF%A1%E6%81%AF"><span class="toc-number">1.4.4.4.</span> <span class="toc-text">查看处于连接状态的系统资源信息</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#wget"><span class="toc-number">1.4.5.</span> <span class="toc-text">wget</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.5.</span> <span class="toc-text">文件上传下载</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E5%B7%A5%E5%85%B7-lrzsz"><span class="toc-number">1.5.1.</span> <span class="toc-text">安装上传下载工具 lrzsz</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6"><span class="toc-number">1.5.2.</span> <span class="toc-text">上传文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%8B%E8%BD%BD%E6%96%87%E4%BB%B6"><span class="toc-number">1.5.3.</span> <span class="toc-text">下载文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85%E4%B8%8E%E7%AE%A1%E7%90%86"><span class="toc-number">1.6.</span> <span class="toc-text">软件安装与管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#rpm"><span class="toc-number">1.6.1.</span> <span class="toc-text">rpm</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6%E5%8C%85"><span class="toc-number">1.6.1.1.</span> <span class="toc-text">安装软件包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A8%A1%E7%B3%8A%E6%90%9C%E7%B4%A2%E8%BD%AF%E4%BB%B6%E5%8C%85"><span class="toc-number">1.6.1.2.</span> <span class="toc-text">模糊搜索软件包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B2%BE%E7%A1%AE%E6%9F%A5%E6%89%BE%E8%BD%AF%E4%BB%B6%E5%8C%85"><span class="toc-number">1.6.1.3.</span> <span class="toc-text">精确查找软件包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E8%AF%A2%E8%BD%AF%E4%BB%B6%E5%8C%85%E7%9A%84%E5%AE%89%E8%A3%85%E8%B7%AF%E5%BE%84"><span class="toc-number">1.6.1.4.</span> <span class="toc-text">查询软件包的安装路径</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E8%BD%AF%E4%BB%B6%E5%8C%85%E7%9A%84%E6%A6%82%E8%A6%81%E4%BF%A1%E6%81%AF"><span class="toc-number">1.6.1.5.</span> <span class="toc-text">查看软件包的概要信息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%AA%8C%E8%AF%81%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%86%85%E5%AE%B9%E5%92%8C%E5%AE%89%E8%A3%85%E6%96%87%E4%BB%B6%E6%98%AF%E5%90%A6%E4%B8%80%E8%87%B4"><span class="toc-number">1.6.1.6.</span> <span class="toc-text">验证软件包内容和安装文件是否一致</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E8%BD%AF%E4%BB%B6%E5%8C%85"><span class="toc-number">1.6.1.7.</span> <span class="toc-text">更新软件包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A0%E9%99%A4%E8%BD%AF%E4%BB%B6%E5%8C%85"><span class="toc-number">1.6.1.8.</span> <span class="toc-text">删除软件包</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#yum"><span class="toc-number">1.6.2.</span> <span class="toc-text">yum</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6%E5%8C%85-1"><span class="toc-number">1.6.2.1.</span> <span class="toc-text">安装软件包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A3%80%E6%9F%A5%E6%9B%B4%E6%96%B0%E8%BD%AF%E4%BB%B6%E5%8C%85"><span class="toc-number">1.6.2.2.</span> <span class="toc-text">检查更新软件包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9B%B4%E6%96%B0%E6%8C%87%E5%AE%9A%E7%9A%84%E8%BD%AF%E4%BB%B6%E5%8C%85"><span class="toc-number">1.6.2.3.</span> <span class="toc-text">更新指定的软件包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E8%B5%84%E6%BA%90%E5%BA%93%E4%B8%AD%E6%9F%A5%E6%89%BE%E8%BD%AF%E4%BB%B6%E5%8C%85%E4%BF%A1%E6%81%AF"><span class="toc-number">1.6.2.4.</span> <span class="toc-text">在资源库中查找软件包信息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%97%E5%87%BA%E5%B7%B2%E7%BB%8F%E5%AE%89%E8%A3%85%E7%9A%84%E6%89%80%E6%9C%89%E8%BD%AF%E4%BB%B6%E5%8C%85"><span class="toc-number">1.6.2.5.</span> <span class="toc-text">列出已经安装的所有软件包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%97%E5%87%BA%E8%BD%AF%E4%BB%B6%E5%8C%85%E5%90%8D%E7%A7%B0"><span class="toc-number">1.6.2.6.</span> <span class="toc-text">列出软件包名称</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A8%A1%E7%B3%8A%E6%90%9C%E7%B4%A2%E8%BD%AF%E4%BB%B6%E5%8C%85-1"><span class="toc-number">1.6.2.7.</span> <span class="toc-text">模糊搜索软件包</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86"><span class="toc-number">1.7.</span> <span class="toc-text">用户管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF%E6%9F%A5%E7%9C%8B"><span class="toc-number">1.7.1.</span> <span class="toc-text">用户信息查看</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E7%94%A8%E6%88%B7%E4%BF%A1%E6%81%AF"><span class="toc-number">1.7.1.1.</span> <span class="toc-text">查看用户信息</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E7%94%A8%E6%88%B7%E7%BB%84%E4%BF%A1%E6%81%AF"><span class="toc-number">1.7.1.2.</span> <span class="toc-text">查看用户组信息</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#passwd-1"><span class="toc-number">1.7.2.</span> <span class="toc-text">passwd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#su-1"><span class="toc-number">1.7.3.</span> <span class="toc-text">su</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#groupadd"><span class="toc-number">1.7.4.</span> <span class="toc-text">groupadd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#groupdel"><span class="toc-number">1.7.5.</span> <span class="toc-text">groupdel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#useradd"><span class="toc-number">1.7.6.</span> <span class="toc-text">useradd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#usermod"><span class="toc-number">1.7.7.</span> <span class="toc-text">usermod</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#userdel"><span class="toc-number">1.7.8.</span> <span class="toc-text">userdel</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E5%9F%BA%E6%9C%AC%E5%B1%9E%E6%80%A7"><span class="toc-number">1.8.</span> <span class="toc-text">文件基本属性</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#chown"><span class="toc-number">1.8.1.</span> <span class="toc-text">chown</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#chmod"><span class="toc-number">1.8.2.</span> <span class="toc-text">chmod</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/06/10/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="Linux常用命令"><img src="/img/default-cover/15.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Linux常用命令"/></a><div class="content"><a class="title" href="/2023/06/10/Linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" title="Linux常用命令">Linux常用命令</a><time datetime="2023-06-10T02:31:22.000Z" title="Created 2023-06-10 10:31:22">2023-06-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/24/Spring%E5%8E%9F%E7%90%86/" title="Spring 原理"><img src="/img/default-cover/33.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Spring 原理"/></a><div class="content"><a class="title" href="/2023/05/24/Spring%E5%8E%9F%E7%90%86/" title="Spring 原理">Spring 原理</a><time datetime="2023-05-24T12:35:22.000Z" title="Created 2023-05-24 20:35:22">2023-05-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/10/%E9%98%85%E8%AF%BB%E6%BA%90%E7%A0%81/" title="阅读源码-@Transaction"><img src="/img/default-cover/1.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="阅读源码-@Transaction"/></a><div class="content"><a class="title" href="/2023/05/10/%E9%98%85%E8%AF%BB%E6%BA%90%E7%A0%81/" title="阅读源码-@Transaction">阅读源码-@Transaction</a><time datetime="2023-05-10T09:30:00.000Z" title="Created 2023-05-10 17:30:00">2023-05-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/05/04/ELK/" title="ELK"><img src="/img/default-cover/44.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ELK"/></a><div class="content"><a class="title" href="/2023/05/04/ELK/" title="ELK">ELK</a><time datetime="2023-05-04T07:31:22.000Z" title="Created 2023-05-04 15:31:22">2023-05-04</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/27/XXL-JOB/" title="XXL-JOB"><img src="/img/default-cover/59.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="XXL-JOB"/></a><div class="content"><a class="title" href="/2023/04/27/XXL-JOB/" title="XXL-JOB">XXL-JOB</a><time datetime="2023-04-27T07:31:22.000Z" title="Created 2023-04-27 15:31:22">2023-04-27</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By YuanJW</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
