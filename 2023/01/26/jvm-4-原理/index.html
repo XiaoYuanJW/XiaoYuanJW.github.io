@@ -1,0 +1,506 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>jvm 高级 | Hexo</title><meta name="keywords" content="jvm"><meta name="author" content="YuanJW"><meta name="copyright" content="YuanJW"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="jvm 原理jvm 数据存储栈的数据存储局部变量表 slotjava 提供了8个基本数据类型 byte-1,short-2,integer-4,long-8,float-4,double-8,char-2,boolean-1 每个基本数据类型内存占用的字节数不同，注意这里的内存占用指的是：堆上或数组中内存分配的空间大小，栈上的内存分配实现不同。   jvm的栈中的局部变量表用于存储方法的局部变量，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="jvm 高级">
+<meta property="og:url" content="http://example.com/2023/01/26/jvm-4-%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="jvm 原理jvm 数据存储栈的数据存储局部变量表 slotjava 提供了8个基本数据类型 byte-1,short-2,integer-4,long-8,float-4,double-8,char-2,boolean-1 每个基本数据类型内存占用的字节数不同，注意这里的内存占用指的是：堆上或数组中内存分配的空间大小，栈上的内存分配实现不同。   jvm的栈中的局部变量表用于存储方法的局部变量，">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/img/default-cover/54.png">
+<meta property="article:published_time" content="2023-01-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-02-18T02:49:17.395Z">
+<meta property="article:author" content="YuanJW">
+<meta property="article:tag" content="jvm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/default-cover/54.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/01/26/jvm-4-%E5%8E%9F%E7%90%86/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'jvm 高级',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-02-18 10:49:17'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.2"><link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">46</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">21</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/default-cover/54.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Hexo</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> About</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">jvm 高级</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2023-01-25T16:00:00.000Z" title="Created 2023-01-26 00:00:00">2023-01-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2024-02-18T02:49:17.395Z" title="Updated 2024-02-18 10:49:17">2024-02-18</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="jvm 高级"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="jvm-原理"><a href="#jvm-原理" class="headerlink" title="jvm 原理"></a>jvm 原理</h1><h2 id="jvm-数据存储"><a href="#jvm-数据存储" class="headerlink" title="jvm 数据存储"></a>jvm 数据存储</h2><h3 id="栈的数据存储"><a href="#栈的数据存储" class="headerlink" title="栈的数据存储"></a>栈的数据存储</h3><h4 id="局部变量表-slot"><a href="#局部变量表-slot" class="headerlink" title="局部变量表 slot"></a>局部变量表 slot</h4><p>java 提供了8个基本数据类型 byte-1,short-2,integer-4,long-8,float-4,double-8,char-2,boolean-1 每个基本数据类型内存占用的字节数不同，注意这里的内存占用指的是：堆上或数组中内存分配的空间大小，栈上的内存分配实现不同。</p>
+<img src="https://s2.loli.net/2024/01/26/72qp8fgIoLhmate.png" alt="image-20240126153922430" style="zoom:33%;" />
+
+<p>jvm的栈中的局部变量表用于存储方法的局部变量，局部变量表中的每个槽位（Slot）都有固定的大小，一般为32位，可以容纳一个基本数据类型的值或者一个对象的引用。byte, char, short, boolean, int, float，对象引用占用一个槽位即32位，float，double占用两个槽位。</p>
+<p>jvm的栈中的操作数栈用于存储方法执行过程中的操作数，基本数据类型或者对象引用在操作数栈的存储大小与局部变量表中的存储大小。</p>
+<img src="https://s2.loli.net/2024/01/31/wEOpdax2XqsMK5G.png" alt="image-20240126160335764" style="zoom: 33%;" />
+
+<p>我们发现 byte、char、short 和 boolean 类型在局部变量表中占用一个槽位即32位，这样的设计是为权衡性能和存储的考虑：</p>
+<ul>
+<li>性能：利用硬件数据对齐（避免数据类型判断）和处理优势，提高运行时性能</li>
+<li>一致性：保证跨平台的一致性，保证在不同硬件平台的运行</li>
+</ul>
+<h4 id="整数类型转换"><a href="#整数类型转换" class="headerlink" title="整数类型转换"></a>整数类型转换</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 源代码</span><br><span class="line"><span class="type">byte</span> <span class="variable">b</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"><span class="type">short</span> <span class="variable">s</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line"><span class="type">boolean</span> <span class="variable">bool</span> <span class="operator">=</span> <span class="literal">true</span>;</span><br><span class="line"># 字节码</span><br><span class="line"> <span class="number">0</span> iconst_1</span><br><span class="line"> <span class="number">1</span> istore_1</span><br><span class="line"> <span class="number">5</span> iconst_1</span><br><span class="line"> <span class="number">6</span> istore_3</span><br><span class="line"> <span class="number">7</span> iconst_1</span><br><span class="line"> <span class="number">8</span> istore <span class="number">4</span></span><br></pre></td></tr></table></figure>
+
+<p>上述代码我们发现，boolean、short、boolean 在栈的局部变量表中被当成 int 来处理。这种优化是为了简化指令集和提高性能，避免引入专门的布尔操作指令以简化虚拟机的设计实现，也确保硬件层面执行整数操作更加高效的原则。</p>
+<h4 id="栈和堆的数据加载"><a href="#栈和堆的数据加载" class="headerlink" title="栈和堆的数据加载"></a>栈和堆的数据加载</h4><ul>
+<li>堆上的数据加载到栈上：栈上的占用空间大于等于堆上的占用空间<ul>
+<li>无符号位 boolean char：低位复制，高位补0</li>
+<li>有符号位 byte short：底位复制，高位非负补0，负数补1</li>
+</ul>
+</li>
+<li>栈上的数据加载到堆上：堆上的占用空间小于栈上的占用空间<ul>
+<li>高位清除，低位复制（boolean 只复制最后一位）</li>
+</ul>
+</li>
+</ul>
+<h3 id="堆的数据存储"><a href="#堆的数据存储" class="headerlink" title="堆的数据存储"></a>堆的数据存储</h3><p>使用new关键字创建对象时，创建的对象都存储在jvm堆内存中，下面将介绍一下对象在堆内存中的结构和占用大小。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Student</span> &#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="type">long</span> id;     <span class="comment">// 基本类型long占用8字节</span></span><br><span class="line">  <span class="keyword">private</span> <span class="type">int</span> age;		 <span class="comment">// 基本类型int占用4字节</span></span><br><span class="line">  <span class="keyword">private</span> String name; <span class="comment">// 引用数据类型 一个指针存储对象地址 64位虚拟机占用8字节 32位占用4字节</span></span><br><span class="line">  </span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="comment">// 创建一个 Student 对象实例</span></span><br><span class="line">    <span class="type">Student</span> <span class="variable">student</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>();</span><br><span class="line">    System.in.read();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Student类的属性占用 20字节，但是使用visualvm采样 (Sampler-&gt;Memory) 内存直方图时，发现Student实例实际占用了32字节 </p>
+<p><img src="https://s2.loli.net/2024/01/31/UYRSfAlPpzDvc8M.png" alt="image-20240131135247049"></p>
+<h4 id="内存布局"><a href="#内存布局" class="headerlink" title="内存布局"></a>内存布局</h4><p>对象在堆中的<strong>内存布局</strong>：对象在堆中存放时的各个组成部分和存储结构。</p>
+<p>对象分为普通对象和数组对象，存储结构图如下：</p>
+<img src="https://s2.loli.net/2024/01/27/alEwxVcdYsKbriT.png" alt="image-20240127152803178" style="zoom: 33%;" />
+
+<h5 id="对象的组成部分"><a href="#对象的组成部分" class="headerlink" title="对象的组成部分"></a>对象的组成部分</h5><ul>
+<li><p>对象头 - Object Header：存放标记字段 Mark Word 和元信息指针 Kclass pointer</p>
+<ul>
+<li><p>标记字段 Mark Word：存储垃圾收集和锁定机制的关键基本信息，64位虚拟机里占用8字节（区分是否开启压缩指针），32位虚拟机占用4字节</p>
+<ul>
+<li><p>标记字段在不同的对象状态（锁状态和垃圾回收状态）下存放的内存不同</p>
+<img src="https://s2.loli.net/2024/01/31/ZudBgs3RpqmMi9E.png" alt="image-20240131142630210" style="zoom:33%;" /></li>
+</ul>
+</li>
+<li><p>元数据指针 Kclass pointer：指向方法区的InstanceKlass对象，用于运行时查看对象的类型信息，以便于方法调用和字段访问等操作。指针占用64位占用8字节</p>
+<img src="https://s2.loli.net/2024/01/31/TkfxX3MacysVrwj.png" alt="image-20240131151003774" style="zoom: 33%;" /></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>对象数据：存放对象包含其字段（成员变量）的实际数据</li>
+<li>对齐填充 padding：内存大小向上取整添加一些额外的字节对象的末尾，用于内存对齐<ul>
+<li>填充字节通常不包含实际数据，只是为了确保对象在内存中的地址是按照特定的规则对齐的</li>
+</ul>
+</li>
+</ul>
+<p>如果是数组对象，对象的对象头中还包含了一个数组长度：</p>
+<ul>
+<li>数组长度：用于快速获取数组的长度</li>
+</ul>
+<p>了解对象的内存布局后，发现student实例的大小应该是 8 + 8 + 20 = 36 &gt; 32，这是由于<strong>压缩指针</strong>的造成的。</p>
+<h5 id="JOL查看内存布局"><a href="#JOL查看内存布局" class="headerlink" title="JOL查看内存布局"></a>JOL查看内存布局</h5><blockquote>
+<p>JOL 是用于分析JVM中对象内存布局的工具，它使用了UNSAFE、JVMTI和Serviceability Agent等虚拟机技术分析对象在堆内存中的布局。</p>
+</blockquote>
+<p>添加依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.openjdk.jol<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jol-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.9<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>打印内存布局</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Student</span> <span class="variable">student</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>();</span><br><span class="line"><span class="comment">// 调用hashcode方法 hashcode的结果将会被保存到对象头中mark word中</span></span><br><span class="line">System.out.println(Integer.toBinaryString(student.hashCode()));</span><br><span class="line">System.out.println(ClassLayout.parseInstance(student).toPrintable());</span><br></pre></td></tr></table></figure>
+
+<img src="https://s2.loli.net/2024/01/31/FZ1XUycYKANnxCQ.png" alt="image-20240131144502349" style="zoom:33%;" />
+
+<p>可以看到对象头的大小为8+4=12字节，这是因为JDK8默认开启了指针压缩</p>
+<p>添加参数虚拟机参数 -XX:-UseCompressedOops 关闭压缩指针</p>
+<img src="https://s2.loli.net/2024/01/31/DHAwN2osixSgjLu.png" alt="image-20240131150416992" style="zoom:33%;" />
+
+<p>关闭指针压缩后，对象头大小为16字节</p>
+<h5 id="指针压缩"><a href="#指针压缩" class="headerlink" title="指针压缩"></a>指针压缩</h5><p>在64位虚拟机中引用指针占用 8字节，因为8字节可以寻址的范围是2的64次方，由于大多数应用程序不会接近使用接近2^64个不同的对象地址即使用大小为16777216 TB，这意味着许多位在实际应用中是浪费的， jvm为了减少这部分的内存使用量。jvm 使用了指针压缩技术，将引用指针从 8个字节的 压缩成 4个字节，此功能默认开启，可以使用 -XX:-UseCompressedOops 关闭压缩指针。</p>
+<img src="https://s2.loli.net/2024/01/31/4WlT91y3RsuNfqX.png" alt="image-20240131152154281" style="zoom:33%;" />
+
+<h6 id="指针压缩实现"><a href="#指针压缩实现" class="headerlink" title="指针压缩实现"></a>指针压缩实现</h6><p>指针压缩的思想就是将寻址的单位放大。在不使用指针压缩的情况下，64位系统上的每个指针都可以直接寻址到1字节的精度 即 每个指针都能够独立指向内存中的每个字节。当启用指针压缩时，一个指针不再是直接寻址到单个字节，而是寻址到一个更大的单位，例如8个字节，这些较大的单位看作是内存中的“槽”，每个槽位的大小为8字节，从0开始进行编号，指针将存储这些编号，此时对象的真实地址等于编号*8。</p>
+<img src="https://s2.loli.net/2024/01/31/v8wrcHIQkWXognd.png" alt="image-20240131153412785" style="zoom:25%;" />
+
+<h6 id="指针压缩的问题"><a href="#指针压缩的问题" class="headerlink" title="指针压缩的问题"></a>指针压缩的问题</h6><p>指针压缩将指针的占用的大小变小，但是有带来了两个问题：</p>
+<ul>
+<li><p>不足“槽”内存大小的对象需要进行内存对齐填充</p>
+<p>将对象的填充至8字节的倍数，存在部分空间浪费（但是对于Hotspot虚拟机，即使不开启指针压缩，对象也需要进行内存对齐）。</p>
+</li>
+<li><p>寻址大小最多支持2的35次方即内存大小最大为32GB（如果堆内存超过32GB时，指针压缩将会自动关闭）</p>
+<p>不开启指针压缩，寻址范围可以达到2的64次方；当使用指针压缩时，每个“槽”占用8字节，此时内存的最大大小为 2的32次方 * 8 = 2的35次方位即32gb</p>
+</li>
+</ul>
+<h5 id="内存对齐"><a href="#内存对齐" class="headerlink" title="内存对齐"></a>内存对齐</h5><p>在对比开启指针压缩和未开启指针压缩的两种情况下， 我们发现：在对象数据中都发生了内存填充 </p>
+<blockquote>
+<p>内存对齐主要目的是 为了解决并发情况下，cpu缓存失效的问题。</p>
+</blockquote>
+<p>计算机引入了cpu缓存，加快了数据读取速度，cpu缓存由缓存行组成，64位虚拟机每个缓存行的大小为8字节，int 默认占用的内存大小为 4字节，一个缓存行可以存放两个int，此时，假设一个缓存行里存放了两个int类型的值：A对象的int和B对象的int，此时A对象的int数据发生了变化，需要对这个数据所在缓存行进行剔除，重新从内存中的加载，这时会发生B对象缓存失效的问题，也需要重新从内存中进行加载。导致这类的问题的核心原因是，两个数据在同一个缓存行中存放，导致A的写操作导致B数据的读操作效率降低。</p>
+<img src="https://s2.loli.net/2024/02/01/bgU7l5AFWtGMiPy.png" alt="image-20240201113438038" style="zoom:33%;" />
+
+<p>引入内存对齐后，避免了同一个缓存行的存放两个不同对象的情况，这样当一个对象的缓存行失效后，不会影响其他对象，优化cpu缓存行的性能。</p>
+<img src="https://s2.loli.net/2024/02/01/EbhPgeGNxTAutJX.png" alt="image-20240201114302456" style="zoom:33%;" />
+
+
+
+<p> 因此内存对齐要求最终内存占用的字节数量需要被8整除。</p>
+<h5 id="字段重排列"><a href="#字段重排列" class="headerlink" title="字段重排列"></a>字段重排列</h5><blockquote>
+<p>字段重排序是编译器为了优化数据结构，改变字段在内存中的排列顺序，以确保每个属性的偏移量offset为字段长度的四倍，以确保字段之间的对齐，减少由于内存对齐导致的填充。</p>
+</blockquote>
+<img src="https://s2.loli.net/2024/02/01/Et1veNzPTirISFc.png" alt="image-20240201151046424" style="zoom:33%;" />
+
+<p>上图中，int类型属性排到了long类型属性的后面，这样int类型被存储在和 kclass pointer 一样的缓存行中，避免了 long 类型分配在两个不同的缓存行中，提高了读取和写入缓存行的效率。</p>
+<p><img src="https://s2.loli.net/2024/02/01/4D3TdJeSpO2t9xW.png" alt="image-20240201151237394"></p>
+<p>但是需要注意的是，jvm 默认对象类型的整数即对象引用的地址，必须存储在基本数据类型之后，这时候无法使用字段重排序优化时，只能尝试内存对齐。</p>
+<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><ul>
+<li><p>默认开启指针压缩，指针被压缩成了4字节</p>
+</li>
+<li><p>字段重排序要求每个属性的offset要被字段类型占用大小整除，内存对齐要求求最终内存占用的字节数量需要被8整除，提高cpu缓存行的效率</p>
+</li>
+<li><p>子类继承父类的属性，子类在堆内存中会先被布局，属性的顺序和偏移量和父类的内存布局完全一致，然后再会处理自己字段的内存布局</p>
+</li>
+</ul>
+<h2 id="jvm-执行原理"><a href="#jvm-执行原理" class="headerlink" title="jvm 执行原理"></a>jvm 执行原理</h2><h3 id="方法调用原理"><a href="#方法调用原理" class="headerlink" title="方法调用原理"></a>方法调用原理</h3><p>java 方法调用的本质是解释和执行字节码，在方法调用之前会先创建一个栈，栈中的栈帧对应方法调用，栈帧用于存放局部变量表和操作数栈等。</p>
+<p>在 jvm 中，一共有五个字节码指令可以执行方法调用：</p>
+<blockquote>
+<p> invoke 方法的核心作用是 获取方法的字节码指令并执行方法调用</p>
+</blockquote>
+<ul>
+<li>invokestatic：调用静态方法 【静态绑定】</li>
+<li>invokespecial：调用对象的构造方法、私有方法以及其父类实例方法，构造方法以及接口的默认方法 【静态绑定】</li>
+<li>invokevirtual：调用对象的非private方法 【动态绑定】</li>
+<li>invokeinterface：调用接口对象方法 【动态绑定】</li>
+<li>invokedynamic：调用动态方法，主要应用于 Lambda 表达式等</li>
+</ul>
+<p>invoke指令获取的方法字节码指令存放在 方法区中的 instanceKlass 中，实现方法定位的方式有两种：静态绑定和动态绑定</p>
+<h4 id="方法定位"><a href="#方法定位" class="headerlink" title="方法定位"></a>方法定位</h4><h5 id="静态绑定"><a href="#静态绑定" class="headerlink" title="静态绑定"></a>静态绑定</h5><p>在编译期间，invoke指令会携带一个 <strong>参数符号引用</strong>，它引用到方法区中常量池中的方法定义，方法定义中包含了 类名、方法名、方法值、参数。这个 参数符号引用指向方法区中的常量池方法定义信息，但是我们需要找到的是 方法区中 instanceKlass 的方法字节码。因此在方法第一次调用时，会将符号引用替换为内存地址的直接引用，此过程就是静态绑定。</p>
+<p>静态绑定无法处理方法多态的情况，它只适用于处理静态方法，私有方法或者final修饰的方法，所以 invokestatic、invokespecial、final修饰的invokevirtual 都是通过静态绑定让程序执行指令时，直接获取到在方法区instanceKlass的方法地址获取字节码并执行。</p>
+<img src="https://s2.loli.net/2024/02/01/Dk1KU7u5sBpPy8L.png" alt="image-20240201155538748" style="zoom:50%;" />
+
+<h5 id="动态绑定"><a href="#动态绑定" class="headerlink" title="动态绑定"></a>动态绑定</h5><p>对于存在子类重写可能的方法，例如 非static、非private、非final 等方法，就需要通过 <strong>动态绑定</strong> 来完成方法地址的绑定，以实现多态。</p>
+<h6 id="动态绑定的实现"><a href="#动态绑定的实现" class="headerlink" title="动态绑定的实现"></a>动态绑定的实现</h6><blockquote>
+<p>动态绑定是基于 方法表 完成，invokevirtual使用了虚方法表（vtable），invokeinterface使用了接口方法表 (itable)，整体思路一致。</p>
+</blockquote>
+<p>每个类都有一个虚方法表，本质上是一个数组，数组中存储了指针，记录了方法的地址。子类方法表中包含父类方法表中的所有方法；子类如果重写了父类方法，则使用子类自己类中方法的地址进行<strong>替换</strong>。</p>
+<img src="https://s2.loli.net/2024/02/02/Uvu5cklDMV6Egr9.png" alt="image-20240202111224527" style="zoom:33%;" />
+
+<p>invokevirtual调用时，会先根据对象头中的类型指针Klass pointer找到方法区中的instanceClass对象，从中找到虚方法表，从虚方法表中获取对应的方法地址并获取字节码执行。</p>
+<img src="https://s2.loli.net/2024/02/02/LBNndt7ZWVka1J3.png" alt="image-20240202111321646" style="zoom:33%;" />
+
+<h3 id="异常捕获原理"><a href="#异常捕获原理" class="headerlink" title="异常捕获原理"></a>异常捕获原理</h3><blockquote>
+<p>在java中，程序遇到异常时会向外抛出，此时可以使用 try-catch 捕获异常的方式将异常捕获并继续让程序指定累计运行。</p>
+<p>jvm 实现的 try-catch 的异常捕获机制需要实现亮点：识别异常（异常类型）和处理异常（跳转异常处理指令）</p>
+</blockquote>
+<p>异常捕获机制实现，需要借助编译时生产的 <strong>异常表</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  <span class="comment">//... </span></span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">  <span class="comment">//... </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="异常表"><a href="#异常表" class="headerlink" title="异常表"></a>异常表</h4><p>异常表在编译期生成，存放是代码中异常的处理信息，包括了异常捕获的<strong>生效范围</strong>以及异常发生后跳转的<strong>异常处理</strong>字节码<strong>指令位置</strong>，用于处理方法中可能抛出的异常。</p>
+<h5 id="异常表的组成"><a href="#异常表的组成" class="headerlink" title="异常表的组成"></a>异常表的组成</h5><blockquote>
+<p>异常表是一个数组</p>
+</blockquote>
+<ul>
+<li>number：数组下标</li>
+<li>start/end pc：异常捕获生效的字节码起点/结束位置-try代码块的指令</li>
+<li>handler pc：异常捕获后跳转的处理异常字节码的位置</li>
+<li>catch_type：捕获的异常类型</li>
+</ul>
+<img src="https://s2.loli.net/2024/02/02/HOGgMoZB1xcj5bR.png" alt="image-20240202160745959" style="zoom:33%;" />
+
+<h5 id="异常捕获的原理"><a href="#异常捕获的原理" class="headerlink" title="异常捕获的原理"></a>异常捕获的原理</h5><h6 id="try-catch"><a href="#try-catch" class="headerlink" title="try-catch"></a>try-catch</h6><blockquote>
+<p>当程序运行过程中触发异常时，jvm 会从上到下遍历异常表的中的所有数组，当捕获的异常在字节码的索引值在异常表中的数组的生效范围内，则jvm会判断所捕获的异常是否和方法表中的异常一致（包括属于其子类）：</p>
+<ul>
+<li>如果一致，跳转到 handler pc 所对应的字节码的位置</li>
+<li>如果不一致，则继续遍历数组，如果没有发现匹配的，则说明异常无法在当前方法执行后被捕获，方法栈帧直接弹出，尝试在上一次方法的栈帧中进行异常处理即交给方法的调用方法处理。</li>
+</ul>
+</blockquote>
+<p>多catch分支处理或者catch中有多个异常（multi-catch）的情况下：异常表会有多个数组，数组中异常的顺序和声明的顺序一致。</p>
+<p>如下示例中，先匹配RuntimeException 再匹配IOException</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125; <span class="keyword">catch</span> (RuntimeException | IOException e) &#123;</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="https://s2.loli.net/2024/02/02/VNUvZd6iXF3qnYK.png" alt="image-20240202161945452" style="zoom:50%;" />
+
+<h6 id="finally"><a href="#finally" class="headerlink" title="finally"></a>finally</h6><p>finally 代码块中的字节码指令是 <strong>一定会被执行</strong> 的，它的处理方式分为以下几步：</p>
+<ul>
+<li><p>finally 代码块中的字节码指令会插入到 try 和 catch 代码块中，以保证在 try 和 catch 之后一定会执行 finally 中的代码</p>
+</li>
+<li><p>在上述基础上，如果捕获的异常不在异常表中或者catch代码块中又发生了异常，只依靠上述情况无法做到让finally代码块中的内容必须执行。因此异常表添加了两个数组，分别以try和catch代码块的字节码为生效范围，any作为捕获异常的类型，any代表所有异常，handler pc跳转的指令为 执行finally方法指令并继续将异常往上抛出。</p>
+<img src="https://s2.loli.net/2024/02/02/yElgO1CumdfYo5i.png" alt="image-20240202163452698" style="zoom:33%;" /></li>
+</ul>
+<h2 id="JIT-即时编译器"><a href="#JIT-即时编译器" class="headerlink" title="JIT 即时编译器"></a>JIT 即时编译器</h2><blockquote>
+<p>jvm 运行java程序的过程：将java的源代码文件编译成字节码文件，然后通过类加载器加字节码指令加载到内存中，再通过 jvm 的解释器将字节码指令解释成对应平台的机器码交给计算机执行。</p>
+<p>在上述过程中，解释器需要一定的时间将字节码文件解释成机器码，这会影响java程序执行的性能。</p>
+<p>JIT 即时编译器会将执行频率较高的代码（经常执行的循环或是频繁调用的方法）标记为热点代码，热点代码将字节码编译成针对特定硬件平台<strong>优化</strong>的机器码并<strong>保存在内存</strong>中。当下次执行到热点代码时，jvm 将直接执行这些优化后的机器码，而不是再次解释执行字节码。</p>
+<p>JIT 的主要作用：标识热点代码并保存其字节码到内存中；优化热点代码</p>
+</blockquote>
+<h3 id="JIT-即时编译器类型"><a href="#JIT-即时编译器类型" class="headerlink" title="JIT 即时编译器类型"></a>JIT 即时编译器类型</h3><p>在 Hotspot 虚拟机中，有三款即时编译器：C1、C2 和 Graal（Graal在GraalVM上）</p>
+<p>C1 编译效率比 C2 快，但是优化效果不如 C2，C1 适合优化执行代码较短的代码，C2 适用于服务端长期执行的代码。</p>
+<p>目前 Hotspot 虚拟机中，C1 和 C2 会协同工作，如下图（注意：jvm 发现优化并保存的字节码执行效率不如之前的话，会对于之前字节码进行取消优化）：</p>
+<img src="https://s2.loli.net/2024/02/02/eaSBFiZT2I49dkM.png" alt="image-20240202170448285" style="zoom: 25%;" />
+
+<h3 id="JIT-分层编译"><a href="#JIT-分层编译" class="headerlink" title="JIT 分层编译"></a>JIT 分层编译</h3><p>JDK7后，jvm 采用了分层编译的方式，让c1和c2会协同发挥作用，分层编译让程序的优化级别分为了5个等级</p>
+<p>在jvm执行字节码的执行过程中，会处于其中的某一个等级，满足一些特定情况下，会从一个等级跳转到另外一个等级。</p>
+<img src="https://s2.loli.net/2024/02/02/6vEAHZPhqabuzT1.png" alt="image-20240202170838166" style="zoom: 25%;" />
+
+<p>即时编译采用独立的线程处理（不会占用用户线程），jvm内部会保存一个队列用于存放需要编译优化的任务（当方法或者循环调用次数达到一定次数后，这些字节码指令会被当成编译任务放入到队列中），编译任务完成后会将编译优化的机器码放入到内存中。</p>
+<img src="https://s2.loli.net/2024/02/03/BXTcaZ3e2nKkr1L.png" alt="image-20240202172427877" style="zoom:33%;" />
+
+<h4 id="编译器协同工作"><a href="#编译器协同工作" class="headerlink" title="编译器协同工作"></a>编译器协同工作</h4><blockquote>
+<p>JIT 即时编译器是 递进和互补的关系。</p>
+</blockquote>
+<ul>
+<li><p>正常情况，初始由解释器进行解释，优化等级为0；随后交由 C1 编译器进行优化，优化等级为3 ，C1 执行过程中，手机运行信息（例如方法执行次数，循环执行次数，分支执行次数等）。然后等待执行次数达到阈值时，进入 C2 编译器进行深层次的优化，优化等级为4</p>
+<p><img src="https://s2.loli.net/2024/02/03/nxNosV8zDjFkmMf.png" alt="image-20240203093523188"></p>
+</li>
+<li><p>如果方法中的字节码较少，jvm 收集信息并判断c1和c2优化性能相差无几，则直接由C1进行优化，避免信息收集带来的性能损耗</p>
+<p><img src="https://s2.loli.net/2024/02/03/O1dz8lUJ3Bw6oFu.png" alt="image-20240203093739957"></p>
+</li>
+<li><p>C1 线程都在忙碌的情况下，会直接交给C2进行优化</p>
+<p><img src="https://s2.loli.net/2024/02/03/t7uRpryhs8ob4YL.png" alt="image-20240203093816581"></p>
+</li>
+<li><p>C2 线程都在忙碌的情况下，会先让2级C1编译收集信息，多运行一会儿，然后再交由3级C1处理，等待C2线程不忙碌后，交给C2优化。（注意：3级C1的处理效率不高，所以在等待C2的过程中，会来回在3级和2级C1的转换）</p>
+<p><img src="https://s2.loli.net/2024/02/03/GDprxhsdMm9wabg.png" alt="image-20240203094126497"></p>
+</li>
+</ul>
+<h3 id="JIT-编译器优化方式"><a href="#JIT-编译器优化方式" class="headerlink" title="JIT 编译器优化方式"></a>JIT 编译器优化方式</h3><blockquote>
+<p>JIT 即时编译器的优化手段有 <strong>方法内联</strong> 和 <strong>逃逸分析</strong></p>
+</blockquote>
+<h4 id="方法内联"><a href="#方法内联" class="headerlink" title="方法内联"></a>方法内联</h4><blockquote>
+<p>方法内联 - method inline：将一个方法的调用的字节码指令直接复制到调用方的字节码指令，减少方法调用的开销（包括管理栈帧的开销、参数传递和返回值处理等）。</p>
+</blockquote>
+<img src="https://s2.loli.net/2024/02/03/eAb9GZqDp6yB745.png" alt="image-20240203095424757" style="zoom:33%;" />
+
+<h5 id="方法内联限制"><a href="#方法内联限制" class="headerlink" title="方法内联限制"></a>方法内联限制</h5><p>方法内联需要一定的条件</p>
+<ul>
+<li>方法编译后的字节码指令总大小 &lt; 35 字节（通过-XX:MaxInlineSize=值 控制），可以直接内联</li>
+<li>方法编译后的字节码指令总大小 &lt; 325 字节（通过-XX:FreqInlineSize=值 控制） 并且是一个热点方法 </li>
+<li>方法编译生成的机器码 &lt;= 1000 字节（通过-XX:InlineSmallCode=值 控制）</li>
+<li>一个接口实现必须 &lt;= 3 如果 &gt;3 则不会发生内联</li>
+</ul>
+<p>所以代码编写尽可能要简单，尽量让方法内联生效，提高程序性能。</p>
+<h4 id="逃逸分析"><a href="#逃逸分析" class="headerlink" title="逃逸分析"></a>逃逸分析</h4><blockquote>
+<p>逃逸分析 - escape analysis：JIT 即时编译阶段，分析对象的作用域和生命周期，保证对象只在方法内被使用，不会被外部对象引用。逃逸分析的两个重要的应用：锁消除和标量替换。</p>
+</blockquote>
+<h5 id="逃逸分析应用"><a href="#逃逸分析应用" class="headerlink" title="逃逸分析应用"></a>逃逸分析应用</h5><h6 id="锁消除"><a href="#锁消除" class="headerlink" title="锁消除"></a>锁消除</h6><p>逃逸分析确定某个对象的访问是线程局部的即对象不会逃逸到方法或线程之外时，它不会存在竞争的条件，对于这个对象的同步（synchronized blocks）操作实际上是不必要的，在这种情况下，jvm 可以安全的消除这些同步操作，从而减少同步带来的开销。</p>
+<h6 id="标量替换"><a href="#标量替换" class="headerlink" title="标量替换"></a>标量替换</h6><p>标量替换的思想是指将一个聚合类型（如对象）分解为若干个独立的标量类型（如基本类型字段）。如果方法中的对象不会逃逸，那 jvm 可以不在堆上分配这个对象的内存，而是将对象的各个字段作为独立的局部变量在栈上分配。这样可以堆内存的分配和回收压力，并且提高访问的效率。</p>
+<h4 id="JIT-优化建议"><a href="#JIT-优化建议" class="headerlink" title="JIT 优化建议"></a>JIT 优化建议</h4><p>根据JIT即时编译器优化代码的特性，编写代码需要注意以下几个事项，让代码更好的被JIT即时编译优化：</p>
+<ul>
+<li>代码编写尽可能要越简单越小，尽量让方法内联生效</li>
+<li>减少接口的实现数量，尽量不超过3个，否则影响内联的处理</li>
+<li>高频调用的方法创建对象临时使用，尽量保证不要让对象逃逸，让JIT优化为标量替换</li>
+</ul>
+<h2 id="垃圾回收原理"><a href="#垃圾回收原理" class="headerlink" title="垃圾回收原理"></a>垃圾回收原理</h2><h3 id="G1垃圾回收器"><a href="#G1垃圾回收器" class="headerlink" title="G1垃圾回收器"></a>G1垃圾回收器</h3><p>G1 垃圾回收器将整个堆内存划分为相同大小的region区域，这些区域根据需求可以作为不同的分代空间，可以被划分为年轻代（Young Generation）、老年代（Old Generation）以及用于存放大对象的特殊区域（Humongous Regions）。G1采用 分代垃圾回收机制，垃圾回收有两种方式：young gc 和 mixed gc(所有年轻代和部分老年代)</p>
+<ul>
+<li>major gc：<ul>
+<li>时机：当年轻代区域不足（年轻代区域的默认最大大小为总内存的60%）无法分配对象时，则需要执行young gc</li>
+<li>过程：标记年轻代区域（eden和survivor区中的存活对象），根据配置的最大暂停时间选择部分区域的存活对象复制到一个新的survivor区中并且年龄加一，清空这部分区域。</li>
+</ul>
+</li>
+<li>mixed gc：当整个堆的占有率达到了阈值时(默认45%，配置-XX:InitalingHeapOccupancyPercent)触发混合回收mixed gc，回收所有年轻代和部分老年代（包括humongous区），采用复制算法。回收部分老年代的目标是 保证最大暂停时间。</li>
+</ul>
+<img src="https://s2.loli.net/2024/02/03/ZFe5UkVf9GIj4Tn.png" alt="image-20240203104445459" style="zoom:33%;" />
+
+<p>流程如下可见基础篇</p>
+<h4 id="G1-垃圾回收器的核心技术"><a href="#G1-垃圾回收器的核心技术" class="headerlink" title="G1 垃圾回收器的核心技术"></a>G1 垃圾回收器的核心技术</h4><h5 id="年轻代回收"><a href="#年轻代回收" class="headerlink" title="年轻代回收"></a>年轻代回收</h5><p>年轻代回收需要扫描和标记出年轻代区域（eden + survivor）的存活对象，但是如果只扫描GC Root到年轻代对象的引用链，此时 老年代中存在对象引用年轻代中的部分对象，而这些对象不能被回收。如果扫描GC Root到所有的对象的引用链，遍历引用链的所有对象，可以精确的标记出所有存活的对象，但是会增加大量的对象扫描和标记的时间，效率较低。</p>
+<img src="https://s2.loli.net/2024/02/03/e4OTC8cLFhbvIU7.png" alt="image-20240203133154875" style="zoom:25%;" />
+
+<p>因此jvm需要对此进行优化，优化方案为维护一个详细的表，记录哪一部分的对象被老年代引用，这些对象不能进行回收。</p>
+<img src="https://s2.loli.net/2024/02/03/gBhJsAOrCQFVbNq.png" alt="image-20240203133435047" style="zoom:25%;" />
+
+<p>但是如果存在eden区存在大量对象被老年代所引用，这个详情引用表的数据将会变得非常大，同时也存在一定的问题，比如上图中，年轻代对象F虽然被老年代对象A引用，但是对象A已经不在GC Root上了，此时F对象依旧在引用详情表上，在年轻代垃圾回收时，年轻代对象F不能被回收。</p>
+<h6 id="记忆集"><a href="#记忆集" class="headerlink" title="记忆集"></a>记忆集</h6><p>上述方案进行一次优化，引用详情表放置到每个region中，记录非收集区域对象（这里是 Old区）引用了收集区域对象（这里是 Eden区或Survior区）的数据结构（如下图所示），这样结构节省了被引用的收集区域对象的地址的空间。</p>
+<p>在扫描时，将记忆集中的对象加入到GC Root中进行扫描，就可以根据引用链判断收集区域的对象是否被非收集区域引用。</p>
+<img src="https://s2.loli.net/2024/02/03/pWDGRUir7taIjoV.png" alt="image-20240203134651210" style="zoom: 25%;" />
+
+
+
+<p>这样的引用记录表被称之为 记忆集 - RememberedSet(简称 RS)，它记录了每个region中的引用了该区域的非收集区域的对象集合。</p>
+<p>在扫描标记时，将记忆集中的对象加入到GC Root中，扫描它们的引用链时，判断收集区域对象是存活的。</p>
+<p>在此基础上，可以将所有的区域按照一定的大小划分为很多块，对于每个块进行编号，将记忆表中的地址使用编号进行替换，节省内存开销。</p>
+<h6 id="卡表"><a href="#卡表" class="headerlink" title="卡表"></a>卡表</h6><p>再次进行优化，将所有区域中的内存按照一定的大小划分为很多的块并且每个块进行编号，其中每个块可以存放多个对象。此时，记忆集中只记录对块的引用关系。如果一个块中有多个对象，则只需要引用一次，从而减少了内存开销。</p>
+<p><img src="https://s2.loli.net/2024/02/17/TuGFabDsyvNzMjU.png" alt="image-20240217204540869"></p>
+<p>块的实现是通过卡表 - Card Table来实现，每个region都有一个卡表，它的底层数据结构就是一个字节数组。将整个堆内存空间划分成每512个字节为一个小块（被称之为Card Page)后，每个区域的卡表使用一个字节标记映射的块中是否存在对象引用了该region区域中的对象。如下图，对象A引用对象F，对象F位于Region1年轻代中，对象A位于Region2老年代中，此时产生了跨代引用 - 老年代引用年轻代，此时region1的卡表的对应位置的字节内容则进行修改为0，表示被引用，称之为 脏卡。</p>
+<p><img src="https://s2.loli.net/2024/02/18/obxisz6Nt7ZThmF.png" alt="image-20240218082902449"></p>
+<p>这样可以标记出当前region被老年代中的哪些部分引用，只需要遍历卡表，找到所有脏卡并添加到记忆集中，更易于生成记忆集。通过卡表构建的记忆集，保存的数据比较少，节省了很大的内存空间。</p>
+<p><img src="https://s2.loli.net/2024/02/18/qguwh4iAUeFc6pv.png" alt="image-20240218083953884"></p>
+<p>在年轻代进行垃圾回收时，会将记忆集中的对象也加入到GC Root对象中，进行扫描并标记其引用链上的对象。</p>
+<h6 id="写屏障"><a href="#写屏障" class="headerlink" title="写屏障"></a>写屏障</h6><p>在跨代引用时，需要将对应卡表的位置标记为脏卡，jvm采用写屏障（write barrier）技术，使用该技术在执行引用关系建立的代码时，在该代码执行之前或者之后插入一段指令，从而维护卡表。</p>
+<p>被插入的指令用于判断是否发生跨代的引用关系建立，如果是则修改对应卡表的位置为脏卡。</p>
+<p><img src="https://s2.loli.net/2024/02/18/s2KjQAmdihxHyv7.png" alt="image-20240218084644395"></p>
+<h6 id="记忆集合生成流程"><a href="#记忆集合生成流程" class="headerlink" title="记忆集合生成流程"></a>记忆集合生成流程</h6><p>记忆集的生成流程如下：</p>
+<ul>
+<li>通过写屏障判断引用关系变更的信息并标记到卡表中</li>
+<li>如果标记为脏卡则记录到一个脏卡队列中，由jvm提供的单独的refinement线程定期从脏卡队列中获取数据并生成记忆集</li>
+</ul>
+<img src="https://s2.loli.net/2024/02/18/P6ZhyKIR49xqueL.png" alt="image-20240218085417416" style="zoom:33%;" />
+
+<p>不直接写入的记忆集而采用队列异步的原因：避免过多用户线程并发访问记忆集，从而对于共享资源加锁的操作造成性能消耗，导致用户线程阻塞。</p>
+<h6 id="年轻代回收流程"><a href="#年轻代回收流程" class="headerlink" title="年轻代回收流程"></a>年轻代回收流程</h6><p>g1 年轻代垃圾回收的整个过程是 STW 的。</p>
+<ul>
+<li>将所有的静态变量和局部变量加入到GC Root中</li>
+<li>使用GC线程协助处理脏卡队列中的信息，更新记忆集，生产最终的记忆集</li>
+<li>将记忆集中的对象加入到GC Root中，扫描GC Root引用链并标记存活对象</li>
+<li>根据设置的最大停顿时间，选择收集部分区域（称之为回收集合-Collection Set）</li>
+<li>复制存活对象并将对象的年龄加一，如果对象的年龄达到15则晋升为老年代，之前的空间直接清空</li>
+<li>处理软、弱、虚、终结器引用以及JNI中的弱引用</li>
+</ul>
+<h6 id="年轻代回收核心技术总结"><a href="#年轻代回收核心技术总结" class="headerlink" title="年轻代回收核心技术总结"></a>年轻代回收核心技术总结</h6><ul>
+<li>卡表 - Card Table</li>
+</ul>
+<p>每个region区域都有自己对应的卡表，卡表本质上是一个字节数组，如果对象引用关系发生了跨代引用，则卡表上引用对象所在位置字节内容进行修改为0即标记为脏卡。卡表的主要作用是用于 生成记忆集，让记忆集占用更少的内存空间。</p>
+<p>卡表会占用一定的内存空间，堆大小为1g时，卡表的大小为 1g/512 = 2mb </p>
+<ul>
+<li>记忆集 - RememberedSet (简称为 RS)</li>
+</ul>
+<p>每个region区域都有自己的记忆集，如果产生了跨代引用，记忆集会记录引用对象所在卡表的位置即卡表数组的下标。在标记阶段，记忆集中的对象加入到GC Root集合中一起扫描和标记</p>
+<ul>
+<li>写屏障 - Write Barrier </li>
+</ul>
+<p>g1 采用写屏障技术，在引用关系建立执行的代码之前或者之后加入一段指令用于完成卡表的维护工作，此过程会带来一部分的性能开销，大约在5%-10%之间</p>
+<h5 id="混合回收"><a href="#混合回收" class="headerlink" title="混合回收"></a>混合回收</h5><p>在总堆的占用率达到了阈值（默认为45%）时会触发混合回收 mixed gc。</p>
+<p>混合回收会在年轻代回收之后或者大对象分配之后触发，混合回收会回收 整个年轻代和部分老年代（包括humongous区域）。</p>
+<p>由于老年代中会有大量的对象，标记所有的存活对象耗时较长，在整个标记过程要尽量保证垃圾回收线程和用户线程并行执行。</p>
+<h6 id="混合回收的步骤"><a href="#混合回收的步骤" class="headerlink" title="混合回收的步骤"></a>混合回收的步骤</h6><ul>
+<li>初始标记：STW 采用三色标记法标记 GC Root 直达的对象</li>
+<li>并发标记：并发执行，扫描GC Root引用链，对存活的对象进行标记 - 从灰色队列中取出被标记为灰色的对象继续往下标记，可能出现错标的情况，将引用断开并且在存在于初始快照的对象放入到 SATB 的队列中。</li>
+<li>最终标记：STW 处理 SATB 相关的对象标记 - 将 SATB队列中的对象全部标记为存活并往下继续扫描和标记</li>
+<li>清理：STW 清空没有任何存活对象的区域</li>
+<li>复制：将存活对象复制到新的区域并重新建立它们的引用关系</li>
+</ul>
+<h6 id="初始标记"><a href="#初始标记" class="headerlink" title="初始标记"></a>初始标记</h6><p>初始标记会暂停所有用户线程，只标记GC Root可直达的对象，停顿时间较短。</p>
+<p>标记过程采用三色标记法进行，三色标记法在原有双色标记（黑色为1代表存活，白色为0代表可回收）的基础上增加了一种灰色，灰色的对象会被添加到特殊的灰色队列中进行处理：</p>
+<ul>
+<li>黑色 - 存活：当前对象在GC Root引用链上，同时它引用的其他对象已经被标记完成</li>
+<li>灰色 - 待处理：当前对象在GC Root引用链上，它引用的其他对象还没有标记完成</li>
+<li>白色 - 可回收：不在GC Root引用链上</li>
+</ul>
+<p>注意：每一个对象的初始颜色都是白色</p>
+<p><img src="https://s2.loli.net/2024/02/18/yoEaDFspA8TOPtg.png" alt="image-20240218100131599"></p>
+<p>三色标记法中，灰色采用一个队列进行保存，而黑色和白色采用bitmap位图的方式来实现，比如每8个字节使用1bit来标识标记的内容，黑色为1，白色为0，如果对象超过8字节，则使用bit位的第一位标记。灰色不会体现在位图上，而是会放入单独的一个队列中进行维护。</p>
+<p><img src="https://s2.loli.net/2024/02/18/9uoNskGnLygI4i7.png" alt="image-20240218100638713"></p>
+<h6 id="并发标记"><a href="#并发标记" class="headerlink" title="并发标记"></a>并发标记</h6><p>并发标记阶段，垃圾回收线程和用户线程并发执行。从灰色队列中获取尚未完成标记的对象，继续进行扫描和标记。</p>
+<p><img src="https://s2.loli.net/2024/02/18/dWbSIuflzX7sjpm.png"></p>
+<p>但是三色标记法标记过程中，存在一个问题，由于用户线程同时执行时，可能会修改对象的引用关系，导致出现错标的情况。</p>
+<p><img src="https://s2.loli.net/2024/02/18/neAdktS1IKDgMWz.png" alt="image-20240218101108862"></p>
+<p>上述情况下，对象b被继续弹出队列进行处理，处理完成标记为黑色，而对象c被对象a引用，对象a为黑色不需要处理，对象c发生了错标的情况，会导致对象c可能被回收掉。</p>
+<blockquote>
+<p>g1 垃圾回收器采用了SATB - Shapshot at the beginning 初始快照技术解决这种问题</p>
+<ul>
+<li>标记开始前创建一个快照，记录当前所有对象</li>
+<li>标记过程中新创建的对象直接标记为黑色</li>
+<li>采用前置写屏障技术，在对象引用赋值前，判断对象是否存在于初始快照中，如果存在则该将之前引用的对象放入到SATB待处理队列中，SATB队列每个线程都有一个，但在最终标记阶段会被合并到一个合并SATB队列中</li>
+</ul>
+</blockquote>
+<h6 id="最终标记"><a href="#最终标记" class="headerlink" title="最终标记"></a>最终标记</h6><p>最终标记阶段暂停所有用户线程，主要处理SATB相关的对象标记。</p>
+<p>在这个过程中，所有线程的SATB队列中剩余的数据会被合并到总的SATB队列中处理，SATB队列中的对象，默认按照存活处理，同时需要处理它们的引用对象。</p>
+<p>SATB技术保证 标记前初始快照存在的对象，在标记阶段引用链被断开，这个对象也能在这一轮垃圾回收不被回收，同时新创建的对象也不会在这一轮被回收。</p>
+<p>SATB的优点是效率非常高，只需要将队列中的对象标记为存活并继续往下标记即可，缺点是在该轮处理时，有可能将不存活的对象标记为存活对象，产生浮动垃圾，需要等待下一轮处理才能回收。</p>
+<h6 id="转移"><a href="#转移" class="headerlink" title="转移"></a>转移</h6><ul>
+<li>根据最终标记的结果，计算出每个区域垃圾对象占用内存的大小，结合停顿时间，选择转移效率最高（垃圾最多的区域）的部分区域进行转移和回收</li>
+<li>首先先复制GC Root直接引用的对象，然后再复制其他对象，并重新建立引用关系</li>
+<li>清空掉之前的区域</li>
+</ul>
+<h3 id="ZGC垃圾回收器"><a href="#ZGC垃圾回收器" class="headerlink" title="ZGC垃圾回收器"></a>ZGC垃圾回收器</h3><h3 id="ShenandoahGC垃圾回收器"><a href="#ShenandoahGC垃圾回收器" class="headerlink" title="ShenandoahGC垃圾回收器"></a>ShenandoahGC垃圾回收器</h3></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="http://example.com">YuanJW</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://example.com/2023/01/26/jvm-4-%E5%8E%9F%E7%90%86/">http://example.com/2023/01/26/jvm-4-%E5%8E%9F%E7%90%86/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/jvm/">jvm</a></div><div class="post_share"><div class="social-share" data-image="/img/default-cover/54.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/ShareJS/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/ShareJS/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/01/26/2-JUC%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-JMM/"><img class="prev-cover" src="/img/default-cover/2.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">JUC 并发编程 (二) JMM</div></div></a></div><div class="next-post pull-right"><a href="/2023/01/26/1-JUC%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B-%E5%9F%BA%E7%A1%80/"><img class="next-cover" src="/img/default-cover/49.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">JUC 并发编程 (一) 基础</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2023/01/15/jvm-3-%E9%AB%98%E7%BA%A7/" title="jvm 高级"><img class="cover" src="/img/default-cover/55.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-01-15</div><div class="title">jvm 高级</div></div></a></div><div><a href="/2024/01/05/jvm-2-%E5%AE%9E%E6%88%98/" title="jvm 实战"><img class="cover" src="/img/default-cover/34.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-01-05</div><div class="title">jvm 实战</div></div></a></div><div><a href="/2023/12/28/jvm-1-%E5%9F%BA%E7%A1%80/" title="jvm 基础"><img class="cover" src="/img/default-cover/25.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-12-28</div><div class="title">jvm 基础</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">YuanJW</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">46</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">21</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/XiaoYuanJW" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="/2754742370@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#jvm-%E5%8E%9F%E7%90%86"><span class="toc-number">1.</span> <span class="toc-text">jvm 原理</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#jvm-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8"><span class="toc-number">1.1.</span> <span class="toc-text">jvm 数据存储</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%88%E7%9A%84%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8"><span class="toc-number">1.1.1.</span> <span class="toc-text">栈的数据存储</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F%E8%A1%A8-slot"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">局部变量表 slot</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B4%E6%95%B0%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="toc-number">1.1.1.2.</span> <span class="toc-text">整数类型转换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%88%E5%92%8C%E5%A0%86%E7%9A%84%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD"><span class="toc-number">1.1.1.3.</span> <span class="toc-text">栈和堆的数据加载</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E7%9A%84%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8"><span class="toc-number">1.1.2.</span> <span class="toc-text">堆的数据存储</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">内存布局</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AF%B9%E8%B1%A1%E7%9A%84%E7%BB%84%E6%88%90%E9%83%A8%E5%88%86"><span class="toc-number">1.1.2.1.1.</span> <span class="toc-text">对象的组成部分</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#JOL%E6%9F%A5%E7%9C%8B%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80"><span class="toc-number">1.1.2.1.2.</span> <span class="toc-text">JOL查看内存布局</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%8C%87%E9%92%88%E5%8E%8B%E7%BC%A9"><span class="toc-number">1.1.2.1.3.</span> <span class="toc-text">指针压缩</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%8C%87%E9%92%88%E5%8E%8B%E7%BC%A9%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.1.2.1.3.1.</span> <span class="toc-text">指针压缩实现</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%8C%87%E9%92%88%E5%8E%8B%E7%BC%A9%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.1.2.1.3.2.</span> <span class="toc-text">指针压缩的问题</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90"><span class="toc-number">1.1.2.1.4.</span> <span class="toc-text">内存对齐</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AD%97%E6%AE%B5%E9%87%8D%E6%8E%92%E5%88%97"><span class="toc-number">1.1.2.1.5.</span> <span class="toc-text">字段重排列</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.1.2.1.6.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jvm-%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.</span> <span class="toc-text">jvm 执行原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.1.</span> <span class="toc-text">方法调用原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E5%AE%9A%E4%BD%8D"><span class="toc-number">1.2.1.1.</span> <span class="toc-text">方法定位</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E7%BB%91%E5%AE%9A"><span class="toc-number">1.2.1.1.1.</span> <span class="toc-text">静态绑定</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A"><span class="toc-number">1.2.1.1.2.</span> <span class="toc-text">动态绑定</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E7%BB%91%E5%AE%9A%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.1.1.2.1.</span> <span class="toc-text">动态绑定的实现</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.2.</span> <span class="toc-text">异常捕获原理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BC%82%E5%B8%B8%E8%A1%A8"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">异常表</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BC%82%E5%B8%B8%E8%A1%A8%E7%9A%84%E7%BB%84%E6%88%90"><span class="toc-number">1.2.2.1.1.</span> <span class="toc-text">异常表的组成</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-number">1.2.2.1.2.</span> <span class="toc-text">异常捕获的原理</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#try-catch"><span class="toc-number">1.2.2.1.2.1.</span> <span class="toc-text">try-catch</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#finally"><span class="toc-number">1.2.2.1.2.2.</span> <span class="toc-text">finally</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#JIT-%E5%8D%B3%E6%97%B6%E7%BC%96%E8%AF%91%E5%99%A8"><span class="toc-number">1.3.</span> <span class="toc-text">JIT 即时编译器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#JIT-%E5%8D%B3%E6%97%B6%E7%BC%96%E8%AF%91%E5%99%A8%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.3.1.</span> <span class="toc-text">JIT 即时编译器类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JIT-%E5%88%86%E5%B1%82%E7%BC%96%E8%AF%91"><span class="toc-number">1.3.2.</span> <span class="toc-text">JIT 分层编译</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8%E5%8D%8F%E5%90%8C%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">编译器协同工作</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#JIT-%E7%BC%96%E8%AF%91%E5%99%A8%E4%BC%98%E5%8C%96%E6%96%B9%E5%BC%8F"><span class="toc-number">1.3.3.</span> <span class="toc-text">JIT 编译器优化方式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E5%86%85%E8%81%94"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">方法内联</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E5%86%85%E8%81%94%E9%99%90%E5%88%B6"><span class="toc-number">1.3.3.1.1.</span> <span class="toc-text">方法内联限制</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">逃逸分析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%80%83%E9%80%B8%E5%88%86%E6%9E%90%E5%BA%94%E7%94%A8"><span class="toc-number">1.3.3.2.1.</span> <span class="toc-text">逃逸分析应用</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E9%94%81%E6%B6%88%E9%99%A4"><span class="toc-number">1.3.3.2.1.1.</span> <span class="toc-text">锁消除</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%A0%87%E9%87%8F%E6%9B%BF%E6%8D%A2"><span class="toc-number">1.3.3.2.1.2.</span> <span class="toc-text">标量替换</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JIT-%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE"><span class="toc-number">1.3.3.3.</span> <span class="toc-text">JIT 优化建议</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%8E%9F%E7%90%86"><span class="toc-number">1.4.</span> <span class="toc-text">垃圾回收原理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#G1%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8"><span class="toc-number">1.4.1.</span> <span class="toc-text">G1垃圾回收器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#G1-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8%E7%9A%84%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF"><span class="toc-number">1.4.1.1.</span> <span class="toc-text">G1 垃圾回收器的核心技术</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B9%B4%E8%BD%BB%E4%BB%A3%E5%9B%9E%E6%94%B6"><span class="toc-number">1.4.1.1.1.</span> <span class="toc-text">年轻代回收</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%AE%B0%E5%BF%86%E9%9B%86"><span class="toc-number">1.4.1.1.1.1.</span> <span class="toc-text">记忆集</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%8D%A1%E8%A1%A8"><span class="toc-number">1.4.1.1.1.2.</span> <span class="toc-text">卡表</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%86%99%E5%B1%8F%E9%9A%9C"><span class="toc-number">1.4.1.1.1.3.</span> <span class="toc-text">写屏障</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%AE%B0%E5%BF%86%E9%9B%86%E5%90%88%E7%94%9F%E6%88%90%E6%B5%81%E7%A8%8B"><span class="toc-number">1.4.1.1.1.4.</span> <span class="toc-text">记忆集合生成流程</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%B9%B4%E8%BD%BB%E4%BB%A3%E5%9B%9E%E6%94%B6%E6%B5%81%E7%A8%8B"><span class="toc-number">1.4.1.1.1.5.</span> <span class="toc-text">年轻代回收流程</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%B9%B4%E8%BD%BB%E4%BB%A3%E5%9B%9E%E6%94%B6%E6%A0%B8%E5%BF%83%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93"><span class="toc-number">1.4.1.1.1.6.</span> <span class="toc-text">年轻代回收核心技术总结</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%B7%B7%E5%90%88%E5%9B%9E%E6%94%B6"><span class="toc-number">1.4.1.1.2.</span> <span class="toc-text">混合回收</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%B7%B7%E5%90%88%E5%9B%9E%E6%94%B6%E7%9A%84%E6%AD%A5%E9%AA%A4"><span class="toc-number">1.4.1.1.2.1.</span> <span class="toc-text">混合回收的步骤</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%88%9D%E5%A7%8B%E6%A0%87%E8%AE%B0"><span class="toc-number">1.4.1.1.2.2.</span> <span class="toc-text">初始标记</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E6%A0%87%E8%AE%B0"><span class="toc-number">1.4.1.1.2.3.</span> <span class="toc-text">并发标记</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E6%A0%87%E8%AE%B0"><span class="toc-number">1.4.1.1.2.4.</span> <span class="toc-text">最终标记</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E8%BD%AC%E7%A7%BB"><span class="toc-number">1.4.1.1.2.5.</span> <span class="toc-text">转移</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ZGC%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8"><span class="toc-number">1.4.2.</span> <span class="toc-text">ZGC垃圾回收器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ShenandoahGC%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8"><span class="toc-number">1.4.3.</span> <span class="toc-text">ShenandoahGC垃圾回收器</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/01/05/jvm-2-%E5%AE%9E%E6%88%98/" title="jvm 实战"><img src="/img/default-cover/34.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="jvm 实战"/></a><div class="content"><a class="title" href="/2024/01/05/jvm-2-%E5%AE%9E%E6%88%98/" title="jvm 实战">jvm 实战</a><time datetime="2024-01-04T16:00:00.000Z" title="Created 2024-01-05 00:00:00">2024-01-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/12/28/jvm-5-%E9%9D%A2%E8%AF%95/" title="No title"><img src="/img/default-cover/39.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="No title"/></a><div class="content"><a class="title" href="/2023/12/28/jvm-5-%E9%9D%A2%E8%AF%95/" title="No title">No title</a><time datetime="2023-12-28T07:53:16.603Z" title="Created 2023-12-28 15:53:16">2023-12-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/12/28/jvm-1-%E5%9F%BA%E7%A1%80/" title="jvm 基础"><img src="/img/default-cover/25.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="jvm 基础"/></a><div class="content"><a class="title" href="/2023/12/28/jvm-1-%E5%9F%BA%E7%A1%80/" title="jvm 基础">jvm 基础</a><time datetime="2023-12-27T16:00:00.000Z" title="Created 2023-12-28 00:00:00">2023-12-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/09/06/JVM%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98%E5%B7%A5%E5%85%B7/" title="JVM性能调优工具"><img src="/img/default-cover/37.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JVM性能调优工具"/></a><div class="content"><a class="title" href="/2023/09/06/JVM%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98%E5%B7%A5%E5%85%B7/" title="JVM性能调优工具">JVM性能调优工具</a><time datetime="2023-09-06T00:31:22.000Z" title="Created 2023-09-06 08:31:22">2023-09-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/06/24/MybatisX%20%E8%87%AA%E5%AE%9A%E4%B9%89%20FreeMarker%20%E6%A8%A1%E5%9D%97/" title="MybatisX 自定义 FreeMarker 模块"><img src="/img/default-cover/14.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="MybatisX 自定义 FreeMarker 模块"/></a><div class="content"><a class="title" href="/2023/06/24/MybatisX%20%E8%87%AA%E5%AE%9A%E4%B9%89%20FreeMarker%20%E6%A8%A1%E5%9D%97/" title="MybatisX 自定义 FreeMarker 模块">MybatisX 自定义 FreeMarker 模块</a><time datetime="2023-06-24T00:31:22.000Z" title="Created 2023-06-24 08:31:22">2023-06-24</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By YuanJW</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
